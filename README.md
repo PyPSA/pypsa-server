@@ -10,7 +10,7 @@ You will in future be able to find a live version at:
 
 Ubuntu packages:
 
-`sudo apt install coinor-clp coinor-cbc python3-venv redis-server`
+`sudo apt install python3-venv redis-server`
 
 Python:
 
