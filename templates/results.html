@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PyPSA server</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='scenarios.css') }}">
+  </head>
+
+  <body>
+    <h1>See previous scenarios</h1>
+    <table>
+      <tr>
+	<th>id</th>
+	<th>link</th>
+      </tr>
+      {% for scenario in scenarios %}
+      <tr>
+	<td>{{ scenario }}</td>
+	<td><a href="static/results/{{ scenario }}/summary.csv">summary.csv</a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>

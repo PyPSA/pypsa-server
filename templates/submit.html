@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PyPSA server</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='scenarios.css') }}">
+  </head>
+
+  <body>
+    <h1>Submit a new scenario</h1>
+    <p>
+      <input class="form-check-input" type="checkbox" name="rooftop" id="rooftop">
+      <label class="form-check-label" for="rooftop">
+	If checked: assume rooftop PV; if unchecked: assume utility PV
+      </label>
+    </p>
+    <p>
+      <input type="number" class="form-control" id="pv_cost" name="pv_cost" value=300>
+      <label for="pv_cost">PV utility capital cost (overnight) [EUR/kWp]</label>
+    </p>
+    <p>
+      <button type="button" class="btn btn-lg btn-primary" id="solve-button">Solve</button>
+      status: <span id="status">Waiting for job</span>
+    </p>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='scenarios.js') }}"></script>
+  </body>
+</html>
