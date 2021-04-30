@@ -8,14 +8,16 @@
   </head>
 
   <body>
-    <h1>See previous scenarios</h1>
+    <h1>Results for scenario {{jobid}}</h1>
     <table>
       <tr>
-	<th>id</th>
+	<th>technology</th>
+	<th>capacity</th>
       </tr>
-      {% for scenario in scenarios %}
+      {% for tech,value in summary.items() %}
       <tr>
-	<td><a href="results/{{ scenario }}">{{ scenario }}</a></td>
+	<td>{{ tech }}</td>
+	<td>{{ value.value }}</td>
       </tr>
       {% endfor %}
     </table>

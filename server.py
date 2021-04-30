@@ -16,7 +16,7 @@
 
 
 
-from flask import Flask, request, jsonify, render_template, Markup
+from flask import Flask, request, jsonify, render_template, Markup, abort
 
 
 from redis import Redis
@@ -112,6 +112,19 @@ def results():
     print(scenarios)
     return render_template('results.html',
                            scenarios=scenarios)
+
+@app.route('/results/<jobid>')
+def resultsid(jobid):
+
+    if not os.path.isdir(f"static/results/{jobid}"):
+        abort(404)
+
+    summary = pd.read_csv(f"static/results/{jobid}/summary.csv",
+                          index_col=0)
+
+    return render_template('result.html',
+                           jobid=jobid,
+                           summary=summary.T.to_dict())
 
 
 @app.route('/jobs', methods=['GET','POST'])
