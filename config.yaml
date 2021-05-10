@@ -18,7 +18,7 @@ scenario:
   lv: [1.0]#, 1.125, 1.25, 1.5, 2.0]# or opt
   clusters: [45] #[37m,90, 128, 181] #[45, 64, 90, 128, 181, 256] #, 362] # (2**np.r_[5.5:9:.5]).astype(int) minimum is 37
   opts: ['']  #for pypsa-eur
-  sector_opts: [97H-T-H-B-I-solar+p3-offwind+p0.67-dist1-linemaxext10]
+  sector_opts: [456H-T-H-B-I-solar+p3-offwind+p0.67-dist1-linemaxext10]
   # Co2L will give default (5%); Co2L0p25 will give 25% CO2 emissions; Co2Lm0p05 will give 5% negative emissions
   #dist{n} includes distribution grids with investment cost of n times cost in data/costs.csv
   planning_horizons : [2050] #timesteps for myopic and perfect

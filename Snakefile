@@ -1,6 +1,15 @@
 
 configfile: "config.yaml"
 
+wildcard_constraints:
+    lv="[a-z0-9\.]+",
+    network="[a-zA-Z0-9]*",
+    simpl="[a-zA-Z0-9]*",
+    clusters="[0-9]+m?",
+    sectors="[+a-zA-Z0-9]+",
+    opts="[-+a-zA-Z0-9]*",
+    sector_opts="[-+a-zA-Z0-9\.\s]*"
+
 
 rule process:
     input:
@@ -65,8 +74,7 @@ rule make_summary:
 rule solve_network:
     input:
         network=config['results_dir'] + config['run'] + "/prenetworks/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}.nc",
-        costs=config['costs_dir'] + "costs_{planning_horizons}.csv",
-        config=config['summary_dir'] + '/' + config['run'] + '/configs/config.yaml'
+        costs=config['costs_dir'] + "costs_{planning_horizons}.csv"
     output: config['results_dir'] + config['run'] + "/postnetworks/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}.nc"
     shadow: "shallow"
     log:
@@ -82,7 +90,7 @@ rule solve_network:
 
 rule prepare_sector_network:
     input:
-        network=pypsaeur('networks/elec_s{simpl}_{clusters}_ec_lv{lv}_{opts}.nc'),
+        network='resources/elec_s{simpl}_{clusters}_ec_lv{lv}_{opts}.nc',
         energy_totals_name='resources/energy_totals.csv',
         co2_totals_name='resources/co2_totals.csv',
         transport_name='resources/transport_data.csv',
@@ -92,10 +100,10 @@ rule prepare_sector_network:
         heat_profile="data/heat_load_profile_BDEW.csv",
         costs=config['costs_dir'] + "costs_{planning_horizons}.csv",
 	h2_cavern = "data/hydrogen_salt_cavern_potentials.csv",
-        profile_offwind_ac=pypsaeur("resources/profile_offwind-ac.nc"),
-        profile_offwind_dc=pypsaeur("resources/profile_offwind-dc.nc"),
-        busmap_s=pypsaeur("resources/busmap_elec_s{simpl}.csv"),
-        busmap=pypsaeur("resources/busmap_elec_s{simpl}_{clusters}.csv"),
+        profile_offwind_ac="resources/profile_offwind-ac.nc",
+        profile_offwind_dc="resources/profile_offwind-dc.nc",
+        busmap_s="resources/busmap_elec_s{simpl}.csv",
+        busmap="resources/busmap_elec_s{simpl}_{clusters}.csv",
         clustered_pop_layout="resources/pop_layout_elec_s{simpl}_{clusters}.csv",
         simplified_pop_layout="resources/pop_layout_elec_s{simpl}.csv",
         industrial_demand="resources/industrial_energy_demand_elec_s{simpl}_{clusters}.csv",
@@ -124,3 +132,15 @@ rule prepare_sector_network:
     resources: mem_mb=2000
     benchmark: config['results_dir'] + config['run'] + "/benchmarks/prepare_network/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}"
     script: "scripts/prepare_sector_network.py"
+
+
+
+rule plot_network:
+    input:
+        network=config['results_dir'] + config['run'] + "/postnetworks/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}.nc"
+    output:
+        map=config['results_dir'] + config['run'] + "/maps/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}-costs-all_{planning_horizons}.pdf",
+        today=config['results_dir'] + config['run'] + "/maps/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}-today.pdf"
+    threads: 2
+    resources: mem_mb=10000
+    script: "scripts/plot_network.py"
