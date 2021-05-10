@@ -14,8 +14,8 @@
 // https://github.com/PyPSA/pypsa-server
 
 
-assumptions = {"rooftop" : true,
-	       "pv_cost" : 500}
+assumptions = {"v2g" : true,
+	       "pv_potential" : 1.0}
 
 for (let i = 0; i < Object.keys(assumptions).length; i++){
     let key = Object.keys(assumptions)[i];

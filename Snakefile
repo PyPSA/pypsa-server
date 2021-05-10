@@ -1,6 +1,4 @@
 
-configfile: "config.yaml"
-
 wildcard_constraints:
     lv="[a-z0-9\.]+",
     network="[a-zA-Z0-9]*",
@@ -10,16 +8,6 @@ wildcard_constraints:
     opts="[-+a-zA-Z0-9]*",
     sector_opts="[-+a-zA-Z0-9\.\s]*"
 
-
-rule process:
-    input:
-        costs="static/results/" + config['run_name'] + "/costs.csv"
-    output:
-        summary="static/results/" + config['run_name'] + "/summary.csv"
-    #log: "logs/build_powerplants.log"
-    threads: 1
-    resources: mem=500
-    script: "scripts/process.py"
 
 rule all:
     input:

@@ -22,6 +22,8 @@ from vresutils.costdata import annuity
 from scipy.stats import beta
 from build_energy_totals import build_eea_co2, build_eurostat_co2, build_co2_totals
 
+import collections
+
 #First tell PyPSA that links can have multiple outputs by
 #overriding the component_attrs. This can be done for
 #as many buses as you need with format busi for i = 2,3,4,5,....
@@ -73,7 +75,7 @@ def co2_emissions_year(cts, opts, year):
         co2_emissions += co2_totals.loc[cts, ["industrial non-elec","industrial processes",
                                               "domestic aviation","international aviation",
                                               "domestic navigation","international navigation"]].sum().sum()
-	
+
     co2_emissions *= 0.001  # Convert MtCO2 to GtCO2
     return co2_emissions
 
@@ -1861,7 +1863,7 @@ def remove_h2_network(n):
 
 def get_parameter(item):
     """Check whether it depends on investment year"""
-    if type(item) is dict:
+    if type(item) is dict or type(item) is collections.OrderedDict:
         return item[investment_year]
     else:
         return item

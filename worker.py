@@ -16,7 +16,7 @@
 
 
 
-import os, snakemake
+import os, snakemake, yaml
 from rq import get_current_job
 
 
@@ -40,30 +40,24 @@ def solve(assumptions):
     if not os.path.isdir(dir_name):
         os.mkdir(dir_name)
 
+    with open("config.yaml", "r") as default_file:
+        default = yaml.safe_load(default_file)
 
-    costs_name = os.path.join(dir_name,"costs.csv")
-
-    f = open(costs_name,"w")
-
-    f.write("name,value\n")
-
-    f.write("PV,{}\n".format(assumptions["pv_cost"]))
-
-    f.close()
+    default["scenario"]["sector_opts"] = ['456H-T-H-B-I-solar+p{solar}-offwind+p0.67-dist1-linemaxext10'.format(solar=assumptions["pv_potential"])]
+    default["run"] = run_name
+    default["sector"]["v2g"] = assumptions["v2g"]
 
     config_name = os.path.join(dir_name,"config.yaml")
 
-    f = open(config_name,"w")
-
-    f.write(f"run_name: {run_name}\n")
-
-    f.write("rooftop: {}\n".format(assumptions["rooftop"]))
-
-    f.close()
+    with open(config_name, "w") as output_file:
+        yaml.dump(default, output_file)
 
     job.meta['status'] = "Running snakemake workflow"
     job.save_meta()
 
-    snakemake.snakemake("Snakefile",configfiles=[config_name])
+    success = snakemake.snakemake("Snakefile",configfiles=[config_name])
+
+    if not success:
+        return {"error" : "Snakemake failed"}
 
     return {}

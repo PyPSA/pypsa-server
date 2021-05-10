@@ -39,9 +39,9 @@ queue = Queue('pypsa', connection=conn)
 app = Flask(__name__)
 app.jinja_env.filters['json'] = lambda v: Markup(json.dumps(v))
 
-booleans = ["rooftop"]
+booleans = ["v2g"]
 
-floats = ["pv_cost"]
+floats = ["pv_potential"]
 
 strings = []
 
@@ -164,7 +164,11 @@ def jobid(jobid):
     result = {"status" : status}
 
     if job.is_finished:
-        result["status"] = "Finished"
+        if "error" in job.result:
+            result["status"] = "Error"
+            result["error"] = job.result["error"]
+        else:
+            result["status"] = "Finished"
 
     return jsonify(result)
 

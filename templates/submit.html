@@ -10,14 +10,14 @@
   <body>
     <h1>Submit a new scenario</h1>
     <p>
-      <input class="form-check-input" type="checkbox" name="rooftop" id="rooftop">
+      <input class="form-check-input" type="checkbox" name="v2g" id="v2g" checked>
       <label class="form-check-label" for="rooftop">
-	If checked: assume rooftop PV; if unchecked: assume utility PV
+	Allow vehicle-to-grid
       </label>
     </p>
     <p>
-      <input type="number" class="form-control" id="pv_cost" name="pv_cost" value=300>
-      <label for="pv_cost">PV utility capital cost (overnight) [EUR/kWp]</label>
+      <input type="number" class="form-control" id="pv_potential" name="pv_potential" value=1.0>
+      <label for="pv_potential">Allowed fraction of PV installable potential [per unit]</label>
     </p>
     <p>
       <button type="button" class="btn btn-lg btn-primary" id="solve-button">Solve</button>
