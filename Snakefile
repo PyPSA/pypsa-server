@@ -45,10 +45,9 @@ rule make_summary:
     input:
         networks=expand(config['results_dir'] + config['run'] + "/postnetworks/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}.nc",
                  **config['scenario']),
-        costs=config['costs_dir'] + "costs_{}.csv".format(config['scenario']['planning_horizons'][0]),
+        costs="data/costs/costs_{}.csv".format(config['scenario']['planning_horizons'][0]),
         plots=expand(config['results_dir'] + config['run'] + "/maps/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}-costs-all_{planning_horizons}.pdf",
               **config['scenario'])
-        #heat_demand_name='data/heating/daily_heat_demand.h5'
     output:
         nodal_costs=config['summary_dir'] + '/' + config['run'] + '/csvs/nodal_costs.csv',
         nodal_capacities=config['summary_dir'] + '/' + config['run'] + '/csvs/nodal_capacities.csv',
@@ -74,7 +73,7 @@ rule make_summary:
 rule solve_network:
     input:
         network=config['results_dir'] + config['run'] + "/prenetworks/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}.nc",
-        costs=config['costs_dir'] + "costs_{planning_horizons}.csv"
+        costs="data/costs/costs_{planning_horizons}.csv"
     output: config['results_dir'] + config['run'] + "/postnetworks/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}.nc"
     shadow: "shallow"
     log:
@@ -98,7 +97,7 @@ rule prepare_sector_network:
         biomass_potentials='resources/biomass_potentials.csv',
         timezone_mappings='data/timezone_mappings.csv',
         heat_profile="data/heat_load_profile_BDEW.csv",
-        costs=config['costs_dir'] + "costs_{planning_horizons}.csv",
+        costs="data/costs/costs_{planning_horizons}.csv",
 	h2_cavern = "data/hydrogen_salt_cavern_potentials.csv",
         profile_offwind_ac="resources/profile_offwind-ac.nc",
         profile_offwind_dc="resources/profile_offwind-dc.nc",
