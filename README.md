@@ -1,5 +1,5 @@
 
-# PyPSA server: web interface for running PyPSA scenarios
+# PyPSA-server: web interface for running PyPSA scenarios
 
 You will in future be able to find a live version at:
 
@@ -8,20 +8,21 @@ You will in future be able to find a live version at:
 
 ## Requirements
 
+PyPSA-server has only been tested on the Ubuntu distribution of GNU/Linux.
+
 Ubuntu packages:
 
-`sudo apt install python3-venv redis-server`
+`sudo apt install redis-server`
 
-Python:
+To install, we recommend using [miniconda](https://docs.conda.io/en/latest/miniconda.html) in combination with [mamba](https://github.com/QuantStack/mamba).
 
-	python3 -m venv venv
-	. venv/bin/activate
-	pip install -r requirements.txt
+	conda install -c conda-forge mamba
+	mamba env create -f environment.yaml
 
 For (optional) server deployment:
 
 	sudo apt install nginx
-	pip install gunicorn
+	mamba install gunicorn
 
 ## Run server locally on your own computer
 
