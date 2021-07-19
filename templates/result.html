@@ -17,7 +17,7 @@
       {% for tech,value in summary.items() %}
       <tr>
 	<td>{{ tech }}</td>
-	<td>{{ value.value }}</td>
+	<td>{{ value[1] }}</td>
       </tr>
       {% endfor %}
     </table>

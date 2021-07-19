@@ -119,7 +119,8 @@ def resultsid(jobid):
     if not os.path.isdir(f"static/results/{jobid}"):
         abort(404)
 
-    summary = pd.read_csv(f"static/results/{jobid}/summary.csv",
+    summary = pd.read_csv(f"static/results/{jobid}/csvs/metrics.csv",
+                          header=None,
                           index_col=0)
 
     return render_template('result.html',
