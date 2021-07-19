@@ -11,7 +11,18 @@ wildcard_constraints:
 
 rule all:
     input:
-       config['summary_dir'] + '/' + config['run'] + '/graphs/costs.pdf'
+        config['summary_dir'] + '/' + config['run'] + '/' +  config['run'] + '.zip'
+
+
+rule zip_results:
+    input:
+        costs=config['summary_dir'] + '/' + config['run'] + '/graphs/costs.pdf'
+    output:
+        zip=config['summary_dir'] + '/' + config['run'] + '/' +  config['run'] + '.zip'
+    threads: 2
+    resources: mem_mb=200
+    script:
+        'scripts/zip_results.py'
 
 
 rule plot_summary:
