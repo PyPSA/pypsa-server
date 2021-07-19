@@ -231,6 +231,8 @@ def plot_map(network, components=["links", "stores", "storage_units", "generator
 
     fig.savefig(snakemake.output.map, transparent=True,
                 bbox_inches="tight")
+    fig.savefig(snakemake.output.map.replace("pdf","png"), transparent=True,
+                bbox_inches="tight")
 
 
 def plot_h2_map(network):
@@ -309,6 +311,8 @@ def plot_h2_map(network):
 
     fig.savefig(snakemake.output.map.replace("-costs-all","-h2_network"), transparent=True,
                 bbox_inches="tight")
+    fig.savefig(snakemake.output.map.replace("-costs-all","-h2_network").replace("pdf","png"), transparent=True,
+                bbox_inches="tight")
 
 
 def plot_map_without(network):
@@ -372,6 +376,7 @@ def plot_map_without(network):
     ax.add_artist(l1_1)
 
     fig.savefig(snakemake.output.today, transparent=True, bbox_inches="tight")
+    fig.savefig(snakemake.output.today.replace("pdf","png"), transparent=True, bbox_inches="tight")
 
 
 def plot_series(network, carrier="AC", name="test"):
@@ -496,6 +501,11 @@ def plot_series(network, carrier="AC", name="test"):
     fig.tight_layout()
 
     fig.savefig("{}{}/maps/series-{}-{}-{}-{}-{}.pdf".format(
+        snakemake.config['results_dir'], snakemake.config['run'],
+        snakemake.wildcards["lv"],
+        carrier, start, stop, name),
+        transparent=True)
+    fig.savefig("{}{}/maps/series-{}-{}-{}-{}-{}.png".format(
         snakemake.config['results_dir'], snakemake.config['run'],
         snakemake.wildcards["lv"],
         carrier, start, stop, name),
