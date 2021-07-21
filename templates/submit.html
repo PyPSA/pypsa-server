@@ -9,16 +9,120 @@
 
   <body>
     <h1>Submit a new scenario</h1>
+    <p>Here you can customise settings for the model <a href="https://github.com/PyPSA/pypsa-eur-sec">PyPSA-Eur-Sec</a>, a sector-coupled model of the European energy system. The model minimises the costs of the energy system assuming all capacity investments in generation, storage, energy conversion and energy transport can be re-optimised. Cost assumptions are taken from forecasts for 2050. 45 regions are assumed. A full year of representative weather and load data is used, but sampled n-hourly.</p>
+    <h3>Basic scenario settings</h3>
     <p>
-      <input class="form-check-input" type="checkbox" name="v2g" id="v2g" checked>
-      <label class="form-check-label" for="rooftop">
-	Allow vehicle-to-grid
+      <input type="number" class="form-control" id="co2_limit" name="co2_limit" value=1.0>
+      <label for="co2_limit">Fraction of 1990 CO2 emissions [per unit]</label>
+    </p>
+    <p>
+      <input type="number" class="form-control" id="frequency" name="frequency" value=1.0>
+      <label for="frequency">Sampling frequency n-hourly for representative year, for computational reasons n>=25 [integer]</label>
+    </p>
+    <h3>Sector coupling options</h3>
+    <p>
+      <input class="form-check-input" type="number" name="land_transport_electric_share" id="land_transport_electric_share" value=1.0>
+      <label class="form-check-label" for="land_transport_electric_share">
+	Share of battery electric vehicles in land transport [per unit]
       </label>
     </p>
     <p>
-      <input type="number" class="form-control" id="pv_potential" name="pv_potential" value=1.0>
-      <label for="pv_potential">Allowed fraction of PV installable potential [per unit]</label>
+      <input class="form-check-input" type="number" name="land_transport_fuel_cell_share" id="land_transport_fuel_cell_share" value=1.0>
+      <label class="form-check-label" for="land_transport_fuel_cell_share">
+	Share of fuel cell electric vehicles in land transport [per unit]
+      </label>
     </p>
+    <p>
+      <input class="form-check-input" type="checkbox" name="bev_dsm" id="bev_dsm" checked>
+      <label class="form-check-label" for="bev_dsm">
+	Allow battery electric vehicles to perform demand response
+      </label>
+    </p>
+    <p>
+      <input class="form-check-input" type="checkbox" name="v2g" id="v2g" checked>
+      <label class="form-check-label" for="v2g">
+	Allow battery electric vehicles to provide vehicle-to-grid services
+      </label>
+    </p>
+    <p>
+      <input class="form-check-input" type="checkbox" name="central" id="central" checked>
+      <label class="form-check-label" for="central">
+	Allow district heating in urban areas with high heat density
+      </label>
+    </p>
+    <p>
+      <input class="form-check-input" type="checkbox" name="tes" id="tes" checked>
+      <label class="form-check-label" for="tes">
+	Allow thermal energy storage
+      </label>
+    </p>
+    <p>
+      <input class="form-check-input" type="number" name="reduce_space_heat_exogenously_factor" id="reduce_space_heat_exogenously_factor" value=1.0>
+      <label class="form-check-label" for="reduce_space_heat_exogenously_factor">
+	Reduction in space heating demand due to building retrofitting and replacement [per unit]
+      </label>
+    </p>
+    <p>
+      <input class="form-check-input" type="number" name="St_primary_fraction" id="St_primary_fraction" value=1.0>
+      <label class="form-check-label" for="St_primary_fraction">
+	Fraction of steel produced by the primary route (rest is recycled) [per unit]
+      </label>
+    </p>
+    <p>
+      <input class="form-check-input" type="number" name="HVC_primary_fraction" id="HVC_primary_fraction" value=1.0>
+      <label class="form-check-label" for="HVC_primary_fraction">
+	Fraction of high value chemicals (ethylene, BTX) produced by the primary route (rest is recycled) [per unit]
+      </label>
+    </p>
+    <p>
+      <input class="form-check-input" type="number" name="co2_sequestration_potential" id="co2_sequestration_potential" value=1.0>
+      <label class="form-check-label" for="co2_sequestration_potential">
+	Yearly sequestration potential for carbon dioxide [MtCO2/a]
+      </label>
+    </p>
+    <h3>Costs</h3>
+    The default costs are based on forecasts for 2050 from the Danish Energy Agency.
+    <p>
+      <input type="number" class="form-control" id="solar_cost" name="solar_cost" value=1.0>
+      <label for="solar_cost">Investment cost for utility solar PV [EUR/kW]</label>
+    </p>
+    <p>
+      <input type="number" class="form-control" id="onwind_cost" name="onwind_cost" value=1.0>
+      <label for="solar_cost">Investment cost for onshore wind [EUR/kW]</label>
+    </p>
+    <p>
+      <input type="number" class="form-control" id="offwind_cost" name="offwind_cost" value=1.0>
+      <label for="offwind_cost">Investment cost for offshore wind (before grid connection cost is added) [EUR/kW]</label>
+    </p>
+    <p>
+      <input type="number" class="form-control" id="electrolysis_cost" name="electrolysis_cost" value=1.0>
+      <label for="electrolysis_cost">Investment cost for hydrogen electrolysis [EUR/kW]</label>
+    </p>
+    <p>
+      <input type="number" class="form-control" id="h2_pipeline_cost" name="h2_pipeline_cost" value=1.0>
+      <label for="h2_pipeline_cost">Investment cost for new hydrogen pipelines [EUR/MW/km]</label>
+    </p>
+    <p>
+      <input class="form-check-input" type="number" name="co2_sequestration_cost" id="co2_sequestration_cost" value=1.0>
+      <label class="form-check-label" for="co2_sequestration_cost">
+	Cost of CO2 sequestration, including transport to sequestration site [EUR/tCO2]
+      </label>
+    </p>
+    <h3>Potentials</h3>
+    The default installable potentials per node (in GW) take account of land use and nature reserves.
+    <p>
+      <input type="number" class="form-control" id="solar_potential" name="solar_potential" value=1.0>
+      <label for="solar_potential">Allowed fraction of default utility solar PV installable potential [per unit]</label>
+    </p>
+    <p>
+      <input type="number" class="form-control" id="onwind_potential" name="onwind_potential" value=1.0>
+      <label for="onwind_potential">Allowed fraction of default onshore wind installable potential [per unit]</label>
+    </p>
+    <p>
+      <input type="number" class="form-control" id="offwind_potential" name="offwind_potential" value=1.0>
+      <label for="offwind_potential">Allowed fraction of default offshore wind installable potential [per unit]</label>
+    </p>
+    <h3>Submit</h3>
     <p>
       <button type="button" class="btn btn-lg btn-primary" id="solve-button">Solve</button>
       status: <span id="status">Waiting for job</span>

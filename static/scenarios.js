@@ -14,8 +14,29 @@
 // https://github.com/PyPSA/pypsa-server
 
 
-assumptions = {"v2g" : true,
-	       "pv_potential" : 1.0}
+assumptions = {"co2_limit" : 0.,
+	       "frequency" : 193,
+	       "land_transport_electric_share" : 0.85,
+	       "land_transport_fuel_cell_share" : 0.15,
+	       "bev_dsm" : true,
+	       "v2g" : true,
+	       "central" : true,
+	       "tes" : true,
+	       "reduce_space_heat_exogenously_factor" : 0.29,
+	       "St_primary_fraction" : 0.3,
+	       "HVC_primary_fraction" : 0.6,
+	       "co2_sequestration_potential" : 200,
+	       "solar_potential" : 1.0,
+	       "onwind_potential" : 1.0,
+	       "offwind_potential" : 1.0,
+	       "solar_cost" : 302,
+	       "onwind_cost" : 963,
+	       "offwind_cost" : 1416,
+	       "electrolysis_cost" : 500,
+	       "h2_pipeline_cost" : 267,
+	       "co2_sequestration_cost" : 20,
+	      };
+
 
 for (let i = 0; i < Object.keys(assumptions).length; i++){
     let key = Object.keys(assumptions)[i];

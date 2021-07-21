@@ -1959,13 +1959,16 @@ if __name__ == "__main__":
     if snakemake.config["sector"]['electricity_distribution_grid']:
         insert_electricity_distribution_grid(n)
 
-    for gen in ["solar","offwind"]:
+    for gen in ["solar","offwind","onwind"]:
         if gen == "solar":
             gens = n.generators.index[n.generators.carrier.str.contains(gen) & ~n.generators.carrier.str.contains("solar rooftop")]
         else:
             gens = n.generators.index[n.generators.carrier.str.contains(gen)]
         n.generators.loc[gens,"p_nom_max"] *= snakemake.config["scenario"][gen + "_potential"]
         n.generators.loc[gens,"capital_cost"] *= snakemake.config["scenario"][gen + "_cost"]
+
+    n.links.loc[n.links.index[n.links.carrier == "H2 Electrolysis"],"capital_cost"] *= snakemake.config["scenario"]["electrolysis_cost"]
+    n.links.loc[n.links.index[n.links.carrier == "H2 pipeline"],"capital_cost"] *= snakemake.config["scenario"]["h2_pipeline_cost"]
 
     if snakemake.config["sector"]['gas_distribution_grid']:
         insert_gas_distribution_costs(n)

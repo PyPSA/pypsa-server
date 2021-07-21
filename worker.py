@@ -19,6 +19,8 @@
 import os, snakemake, yaml
 from rq import get_current_job
 
+with open('defaults.yaml','r') as f:
+    defaults = yaml.safe_load(f)
 
 def solve(assumptions):
 
@@ -43,9 +45,32 @@ def solve(assumptions):
     with open("config.yaml", "r") as default_file:
         default = yaml.safe_load(default_file)
 
-    default["scenario"]["solar_potential"] = assumptions["pv_potential"]
     default["run"] = run_name
-    default["sector"]["v2g"] = assumptions["v2g"]
+
+    default["scenario"]["co2_limit"] = assumptions["co2_limit"]
+    default["scenario"]["frequency"] = assumptions["frequency"]
+
+    if default["scenario"]["frequency"] < 25:
+        return {"error" : "Frequency must be 25-hourly or greater for computational reasons"}
+
+    for tech in ["solar","onwind","offwind"]:
+        default["scenario"][tech + "_potential"] = assumptions[tech + "_potential"]
+
+    for tech in ["solar","onwind","offwind","electrolysis","h2_pipeline"]:
+        #scenario cost is ratio to default cost
+        default["scenario"][tech + "_cost"] = assumptions[tech + "_cost"]/defaults[tech + "_cost"]
+
+    for item in ["land_transport_electric_share","land_transport_electric_share",
+                 "bev_dsm","v2g",
+                 "central","tes",
+                 "reduce_space_heat_exogenously_factor",
+                 "co2_sequestration_potential",
+                 "co2_sequestration_cost"]:
+        default["sector"][item] = assumptions[item]
+
+    for item in ["St_primary_fraction",
+                 "HVC_primary_fraction"]:
+        default["industry"][item] = assumptions[item]
 
     config_name = os.path.join(dir_name,"config.yaml")
 

@@ -20,8 +20,12 @@ scenario:
   industry: True
   solar_cost: 1.
   offwind_cost: 1.
-  solar_potential: 3.
-  offwind_potential: 0.67
+  onwind_cost: 1.
+  electrolysis_cost: 1.
+  h2_pipeline_cost: 1.
+  solar_potential: 1.
+  offwind_potential: 1.
+  onwind_potential: 1.
   linemax_extension: 10. # [456H-T-H-B-I-solar+p3-offwind+p0.67-dist1-linemaxext10]
   co2_limit: 0.
   # Co2L will give default (5%); Co2L0p25 will give 25% CO2 emissions; Co2Lm0p05 will give 5% negative emissions
@@ -127,7 +131,7 @@ sector:
           2045:    0.21
           2050:    0.29
   'retrofitting' :
-    'retro_endogen': True  # co-optimise space heat savings
+    'retro_endogen': False  # co-optimise space heat savings
     'cost_factor' : 1.0
     'interest_rate': 0.04  # for investment in building components
     'annualise_cost': True  # annualise the investment costs
@@ -237,7 +241,7 @@ plotting:
       bus_size_factor: 5.e+4
       linewidth_factor: 3.e+3 # 1.e+3  #3.e+3
 
-  costs_max: 1200
+  costs_max: 1000
   costs_threshold: 1
 
 

@@ -1,0 +1,8 @@
+
+# default costs in 2050 from costs_2050.csv
+# these must also be entered in static/scenario.js
+solar_cost: 302
+onwind_cost: 963
+offwind_cost: 1416
+electrolysis_cost: 500
+h2_pipeline_cost: 267
