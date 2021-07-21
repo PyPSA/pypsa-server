@@ -543,7 +543,7 @@ outputs = ["nodal_costs",
 
 def make_summaries(networks_dict):
 
-    columns = pd.MultiIndex.from_tuples(networks_dict.keys(),names=["cluster","lv","opt","planning_horizon"])
+    columns = pd.Index(networks_dict.keys())
 
     df = {}
 
@@ -573,40 +573,9 @@ def to_csv(df):
 
 
 if __name__ == "__main__":
-    # Detect running outside of snakemake and mock snakemake for testing
-    if 'snakemake' not in globals():
-        from vresutils import Dict
-        import yaml
-        snakemake = Dict()
-        with open('config.yaml', encoding='utf8') as f:
-            snakemake.config = yaml.safe_load(f)
 
-        #overwrite some options
-        snakemake.config["run"] = "version-8"
-        snakemake.config["scenario"]["lv"] = [1.0]
-        snakemake.config["scenario"]["sector_opts"] = ["3H-T-H-B-I-solar3-dist1"]
-        snakemake.config["planning_horizons"] = ['2020', '2030', '2040', '2050']
-        snakemake.input = Dict()
-        snakemake.input['heat_demand_name'] = 'data/heating/daily_heat_demand.h5'
-        snakemake.input['costs'] = snakemake.config['costs_dir'] + "costs_{}.csv".format(snakemake.config['scenario']['planning_horizons'][0])
-        snakemake.output = Dict()
-        for item in outputs:
-            snakemake.output[item] = snakemake.config['summary_dir'] + '/{name}/csvs/{item}.csv'.format(name=snakemake.config['run'],item=item)
-        snakemake.output['cumulative_cost'] = snakemake.config['summary_dir'] + '/{name}/csvs/cumulative_cost.csv'.format(name=snakemake.config['run'])
-    networks_dict = {(cluster, lv, opt+sector_opt, planning_horizon) :
-                     snakemake.config['results_dir'] + snakemake.config['run'] + '/postnetworks/elec_s{simpl}_{cluster}_lv{lv}_{opt}_{sector_opt}_{planning_horizon}.nc'\
-                     .format(simpl=simpl,
-                             cluster=cluster,
-                             opt=opt,
-                             lv=lv,
-                             sector_opt=sector_opt,
-                             planning_horizon=planning_horizon)\
-                     for simpl in snakemake.config['scenario']['simpl'] \
-                     for cluster in snakemake.config['scenario']['clusters'] \
-                     for opt in snakemake.config['scenario']['opts'] \
-                     for sector_opt in snakemake.config['scenario']['sector_opts'] \
-                     for lv in snakemake.config['scenario']['lv'] \
-                     for planning_horizon in snakemake.config['scenario']['planning_horizons']}
+    networks_dict = {snakemake.config['scenario']['planning_horizon'] :
+                     snakemake.config['results_dir'] + snakemake.config['run'] + '/postnetwork.nc' }
 
     print(networks_dict)
 

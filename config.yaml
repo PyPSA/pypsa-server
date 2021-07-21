@@ -10,15 +10,24 @@ run: 'replace_by_server'
 foresight: 'overnight'  #options are overnight, myopic, perfect
 
 scenario:
-  sectors: [E] # ,E+EV,E+BEV,E+BEV+V2G] # [ E+EV, E+BEV, E+BEV+V2G ]
-  simpl: [''] #or 1024,80
-  lv: [1.0]#, 1.125, 1.25, 1.5, 2.0]# or opt
-  clusters: [45] #[37m,90, 128, 181] #[45, 64, 90, 128, 181, 256] #, 362] # (2**np.r_[5.5:9:.5]).astype(int) minimum is 37
-  opts: ['']  #for pypsa-eur
-  sector_opts: [456H-T-H-B-I-solar+p3-offwind+p0.67-dist1-linemaxext10]
+  lv: 1.0 #, 1.125, 1.25, 1.5, 2.0]# or opt
+  clusters: 45 #[37m,90, 128, 181] #[45, 64, 90, 128, 181, 256] #, 362] # (2**np.r_[5.5:9:.5]).astype(int) minimum is 37
+  frequency: 456
+  transport: True
+  biomass: True
+  heating: True
+  biomass: True
+  industry: True
+  solar_cost: 1.
+  offwind_cost: 1.
+  solar_potential: 3.
+  offwind_potential: 0.67
+  linemax_extension: 10. # [456H-T-H-B-I-solar+p3-offwind+p0.67-dist1-linemaxext10]
+  co2_limit: 0.
   # Co2L will give default (5%); Co2L0p25 will give 25% CO2 emissions; Co2Lm0p05 will give 5% negative emissions
-  #dist{n} includes distribution grids with investment cost of n times cost in data/costs.csv
-  planning_horizons : [2050] #timesteps for myopic and perfect
+  planning_horizon: 2050 #timesteps for myopic and perfect
+  decentral: False
+  noH2network: False
 
 # CO2 budget as a fraction of 1990 emissions
 # this is over-ridden if CO2Lx is set in sector_opts
@@ -144,7 +153,7 @@ sector:
   'hydrogen_underground_storage' : True
   'use_fischer_tropsch_waste_heat' : True
   'use_fuel_cell_waste_heat' : True
-  'electricity_distribution_grid' : False
+  'electricity_distribution_grid' : True
   'electricity_distribution_grid_cost_factor' : 1.0  #multiplies cost in data/costs.csv
   'electricity_grid_connection' : True  # only applies to onshore wind and utility PV
   'gas_distribution_grid' : True

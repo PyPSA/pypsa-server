@@ -43,7 +43,7 @@ def solve(assumptions):
     with open("config.yaml", "r") as default_file:
         default = yaml.safe_load(default_file)
 
-    default["scenario"]["sector_opts"] = ['456H-T-H-B-I-solar+p{solar}-offwind+p0.67-dist1-linemaxext10'.format(solar=assumptions["pv_potential"])]
+    default["scenario"]["solar_potential"] = assumptions["pv_potential"]
     default["run"] = run_name
     default["sector"]["v2g"] = assumptions["v2g"]
 

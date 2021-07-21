@@ -162,7 +162,7 @@ def plot_map(network, components=["links", "stores", "storage_units", "generator
     ac_color = "gray"
     dc_color = "m"
 
-    if snakemake.wildcards["lv"] == "1.0":
+    if str(snakemake.config["scenario"]["lv"]) == "1.0":
         # should be zero
         line_widths = n.lines.s_nom_opt - n.lines.s_nom
         link_widths = n.links.p_nom_opt - n.links.p_nom
@@ -309,9 +309,9 @@ def plot_h2_map(network):
                      title='H2 pipeline capacity')
     ax.add_artist(l1_1)
 
-    fig.savefig(snakemake.output.map.replace("-costs-all","-h2_network"), transparent=True,
+    fig.savefig(snakemake.output.map.replace("costs-all","h2_network"), transparent=True,
                 bbox_inches="tight")
-    fig.savefig(snakemake.output.map.replace("-costs-all","-h2_network").replace("pdf","png"), transparent=True,
+    fig.savefig(snakemake.output.map.replace("costs-all","h2_network").replace("pdf","png"), transparent=True,
                 bbox_inches="tight")
 
 
@@ -340,7 +340,7 @@ def plot_map_without(network):
     n.links.drop(n.links.index[(n.links.carrier != "DC") & (
         n.links.carrier != "B2B")], inplace=True)
 
-    if snakemake.wildcards["lv"] == "1.0":
+    if str(snakemake.config["scenario"]["lv"]) == "1.0":
         line_widths = n.lines.s_nom
         link_widths = n.links.p_nom
     else:
@@ -502,45 +502,18 @@ def plot_series(network, carrier="AC", name="test"):
 
     fig.savefig("{}{}/maps/series-{}-{}-{}-{}-{}.pdf".format(
         snakemake.config['results_dir'], snakemake.config['run'],
-        snakemake.wildcards["lv"],
+        snakemake.config["scenario"]["lv"],
         carrier, start, stop, name),
         transparent=True)
     fig.savefig("{}{}/maps/series-{}-{}-{}-{}-{}.png".format(
         snakemake.config['results_dir'], snakemake.config['run'],
-        snakemake.wildcards["lv"],
+        snakemake.config["scenario"]["lv"],
         carrier, start, stop, name),
         transparent=True)
 
 
 # %%
 if __name__ == "__main__":
-    # Detect running outside of snakemake and mock snakemake for testing
-    if 'snakemake' not in globals():
-        from vresutils import Dict
-        import yaml
-        snakemake = Dict()
-        with open('config.yaml') as f:
-            snakemake.config = yaml.safe_load(f)
-        snakemake.config['run'] = "retro_vs_noretro"
-        snakemake.wildcards = {"lv": "1.0"}  # lv1.0, lv1.25, lvopt
-        name = "elec_s_48_lv{}__Co2L0-3H-T-H-B".format(snakemake.wildcards["lv"])
-        suffix = "_retro_tes"
-        name = name + suffix
-        snakemake.input = Dict()
-        snakemake.output = Dict(
-            map=(snakemake.config['results_dir'] + snakemake.config['run']
-                 + "/maps/{}".format(name)),
-            today=(snakemake.config['results_dir'] + snakemake.config['run']
-                   + "/maps/{}.pdf".format(name)))
-        snakemake.input.scenario = "lv" + snakemake.wildcards["lv"]
-#        snakemake.config["run"] = "bio_costs"
-        path = snakemake.config['results_dir'] + snakemake.config['run']
-        snakemake.input.network = (path +
-                                   "/postnetworks/{}.nc"
-                                   .format(name))
-        snakemake.output.network = (path +
-                                    "/maps/{}"
-                                    .format(name))
 
     n = pypsa.Network(snakemake.input.network,
                       override_component_attrs=override_component_attrs)

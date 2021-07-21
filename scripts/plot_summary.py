@@ -392,16 +392,10 @@ if __name__ == "__main__":
         snakemake.output["balances"] = snakemake.config['summary_dir'] + '/{name}/graphs/balances-energy.csv'.format(name=snakemake.config['run'],item=item)
 
 
-    n_header = 4
+    n_header = 1
 
     plot_costs()
 
     plot_energy()
 
     plot_balances()
-
-    for sector_opts in snakemake.config['scenario']['sector_opts']:
-        opts=sector_opts.split('-')
-        for o in opts:
-            if "cb" in o:
-                plot_carbon_budget_distribution()
