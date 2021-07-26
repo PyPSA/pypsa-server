@@ -83,7 +83,6 @@ var poll_timeout = 10*60*1000 + poll_interval/2;
 
 function solve() {
     if (solveButton.text() == solveButtonText["before"]) {
-	document.getElementById("results").innerHTML="";
 	var send_job = new XMLHttpRequest();
 	send_job.open('POST', './jobs', true);
 	send_job.setRequestHeader("Content-Type", "application/json");
@@ -139,7 +138,7 @@ function poll_result() {
 	    clearTimeout(timeout);
 	    console.log("results:",results);
 	    solveButton.text(solveButtonText["before"]);
-	    document.getElementById("results").innerHTML='Results can be viewed at <a href="results/' + jobid + '">' + jobid + '</a>' ;
+            document.getElementById("status").innerHTML='Finished. Results can be viewed at <a href="results/' + jobid + '">' + jobid + '</a>.' ;
 	    $('#solve-button').removeAttr("disabled");
 	};
     };
