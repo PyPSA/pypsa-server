@@ -8,7 +8,45 @@
   </head>
 
   <body>
+    <h1>PyPSA-Eur-Sec optimisation server</h1>
+    <p>This interface allows you to run custom optimisations for a sector-coupled model of the European energy system, <a href="https://github.com/PyPSA/pypsa-eur-sec">PyPSA-Eur-Sec</a>. You can, for example, explore different scenarios to reach net-zero carbon dioxide emissions across electricity, heating, transport and industry.</p>
+
+    <p>The model minimises the costs of the energy system assuming all capacity investments in generation, storage, energy conversion and energy transport can be re-optimised. Energy services (electricity, heating, transport, industrial demand) are provided at today's levels by default, but they can also be altered. Default cost assumptions are taken from forecasts for 2050, mainly from the <a href="https://ens.dk/en/our-services/projections-and-models/technology-data">Danish Energy Agency Technology Data</a>. 45 regions are assumed. A full year of representative weather and load data is used, but sampled n-hourly.</p>
+
+    <h3>Actions</h3>
+
     <p><a href="submit">Submit a new scenario</a></p>
     <p><a href="results">See previously calculated scenarios</a></p>
+
+    <h3>Only free software and open data</h3>
+    <p>The user interface and optimisation model construction and
+       post-processing are all built with free software and open data
+       only. The commercial optimisation
+       solver <a href="https://www.gurobi.com">Gurobi</a> is used for
+       its high performance on this website, but it can also be
+       replaced with an open source solver such
+       as <a href="https://github.com/coin-or/Clp">Clp</a> if
+       performance is not required.  The code for all parts except the
+       solver can be downloaded from the GitHub
+       repository <a href="https://github.com/PyPSA/pypsa-server">pypsa-server</a>. It
+       uses the <a href="https://github.com/PyPSA/PyPSA">Python for
+       Power System Analysis (PyPSA)</a> energy optimisation
+       framework, open weather data from the European Centre for
+       Medium-Range Weather Forecasts
+       (ECMWF) <a href="https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels">ERA5
+       reanalysis dataset</a>,
+       the <a href="https://github.com/PyPSA/atlite">atlite
+       library</a> for converting weather data to generation profiles,
+       and free software for the server infrastructure (GNU/Linux,
+       nginx, Flask, gunicorn, Redis).</p>
+
+    <h3>Contributors and thanks</h3>
+    <p><a href="https://nworbmot.org/">Tom Brown</a> conceived and developed the website.</p>
+    <p>We thank all the developers of the other free software on which this website depends.</p>
+    <p>We thank <a href="https://www.gurobi.com">Gurobi</a> for providing a fully featured commercial licence for the optimisation solver in order to enhance the performance of this website.</p>
+    <h3>Privacy statement</h3>
+    <p>No personal information is stored on the server. There are no cookies.</p>
+    <p>Simulation assumptions and results for each job are stored on the server for statistical purposes.</p>
+
   </body>
 </html>
