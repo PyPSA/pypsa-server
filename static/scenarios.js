@@ -14,7 +14,8 @@
 // https://github.com/PyPSA/pypsa-server
 
 
-assumptions = {"co2_limit" : 0.,
+assumptions = {"scenario_name" : "no name",
+               "co2_limit" : 0.,
 	       "frequency" : 193,
 	       "land_transport_electric_share" : 0.85,
 	       "land_transport_fuel_cell_share" : 0.15,

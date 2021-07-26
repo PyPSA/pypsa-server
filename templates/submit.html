@@ -14,6 +14,10 @@
     <p>193-hourly temporal resolution takes only around 1 minute to solve, but gives reasonable results. This model can only be run at up to 25-hourly resolution (25-hourly takes around 5 minutes to run). Higher resolutions are not offered here because of the computational burden. If you want to run at up to hourly resolution, download the full model and run it yourself, or contact us to discuss terms.</p>
     <h3>Basic scenario settings</h3>
     <p>
+      <input type="text" class="form-control" id="scenario_name" name="scenario_name" value="no name" size="16">
+      <label for="scenario_name">Scenario name so you can identify the scenario later</label>
+    </p>
+    <p>
       <input type="number" class="form-control" id="co2_limit" name="co2_limit" value=1.0>
       <label for="co2_limit">Fraction of 1990 CO2 emissions [per unit]</label>
     </p>

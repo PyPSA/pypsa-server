@@ -11,11 +11,15 @@
     <h1>Previously-run scenarios</h1>
     <table>
       <tr>
+	<th>date & time</th>
+	<th>name</th>
 	<th>id</th>
       </tr>
-      {% for scenario in scenarios %}
+      {% for scenario in scenarios.values() %}
       <tr>
-	<td><a href="results/{{ scenario }}">{{ scenario }}</a></td>
+	<td>{{ scenario["datetime"] }}</td>
+	<td>{{ scenario["scenario_name"] }}</td>
+	<td><a href="results/{{ scenario["jobid"] }}">{{ scenario["jobid"] }}</a></td>
       </tr>
       {% endfor %}
     </table>

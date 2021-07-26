@@ -51,7 +51,7 @@ floats = ["co2_limit",
           "solar_cost","onwind_cost","offwind_cost","electrolysis_cost",
           "electrolysis_cost", "h2_pipeline_cost","co2_sequestration_cost"]
 
-strings = []
+strings = ["scenario_name"]
 
 ints = ["frequency"]
 
@@ -116,10 +116,11 @@ def submit():
 
 @app.route('/results')
 def results():
-    scenarios = os.listdir("static/results")
+    scenarios = pd.read_csv("static/scenarios.csv",
+                            names=["jobid","scenario_name","datetime"])
     print(scenarios)
     return render_template('results.html',
-                           scenarios=scenarios)
+                           scenarios=scenarios.T.to_dict())
 
 @app.route('/results/<jobid>')
 def resultsid(jobid):

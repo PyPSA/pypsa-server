@@ -16,7 +16,7 @@
 
 
 
-import os, snakemake, yaml
+import os, snakemake, yaml, datetime
 from rq import get_current_job
 
 with open('defaults.yaml','r') as f:
@@ -47,8 +47,12 @@ def solve(assumptions):
 
     default["run"] = run_name
 
-    default["scenario"]["co2_limit"] = assumptions["co2_limit"]
-    default["scenario"]["frequency"] = assumptions["frequency"]
+    for item in ["scenario_name","co2_limit","frequency"]:
+        default["scenario"][item] = assumptions[item]
+
+    for forbidden in [",","\n"]:
+        if forbidden in default["scenario"]["scenario_name"]:
+            return {"error" : "Scenario name cannot contain commas or whitespace"}
 
     if default["scenario"]["frequency"] < 25:
         return {"error" : "Frequency must be 25-hourly or greater for computational reasons"}
@@ -84,5 +88,10 @@ def solve(assumptions):
 
     if not success:
         return {"error" : "Snakemake failed"}
+
+    with open("static/scenarios.csv","a") as f:
+        f.write("{},{},{}\n".format(jobid,
+                                    default["scenario"]["scenario_name"],
+                                    str(datetime.datetime.now())))
 
     return {}
