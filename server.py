@@ -31,7 +31,7 @@ import json, os, hashlib
 
 import pandas as pd
 
-conn = Redis.from_url('redis://')
+conn = Redis()
 
 queue = Queue('pypsa', connection=conn)
 

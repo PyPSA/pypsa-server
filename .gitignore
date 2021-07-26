@@ -1,6 +1,8 @@
 
 static/results/
 
+static/50m/
+
 __pycache__
 
 .snakemake/

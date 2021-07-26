@@ -1,7 +1,7 @@
 
 # PyPSA-server: web interface for running PyPSA scenarios
 
-You will in future be able to find a live version at:
+You can find a live version at:
 
 <https://model.energy/scenarios/>
 
@@ -12,7 +12,7 @@ PyPSA-server has only been tested on the Ubuntu distribution of GNU/Linux.
 
 Ubuntu packages:
 
-`sudo apt install redis-server`
+`sudo apt install redis-server zip`
 
 To install, we recommend using [miniconda](https://docs.conda.io/en/latest/miniconda.html) in combination with [mamba](https://github.com/QuantStack/mamba).
 
