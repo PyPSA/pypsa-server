@@ -27,7 +27,7 @@ from rq import Queue
 
 import time, datetime
 
-import json, os, hashlib
+import json, os, hashlib, yaml
 
 import pandas as pd
 
@@ -129,12 +129,21 @@ def resultsid(jobid):
         abort(404)
 
     summary = pd.read_csv(f"static/results/{jobid}/csvs/metrics.csv",
-                          header=None,
-                          index_col=0)
+                          names=["item","value"],
+                          index_col=0,
+                          squeeze=True)
+
+    print(summary)
+
+    print(summary.to_dict())
+
+    with open(f"static/results/{jobid}/config.yaml",'r') as f:
+        options = yaml.safe_load(f)
 
     return render_template('result.html',
                            jobid=jobid,
-                           summary=summary.T.to_dict())
+                           options=options,
+                           summary=summary.to_dict())
 
 
 @app.route('/jobs', methods=['GET','POST'])

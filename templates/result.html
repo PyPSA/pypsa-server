@@ -9,19 +9,37 @@
 
   <body>
     <h1>Results for scenario {{jobid}}</h1>
+
+    <h3>Summary results</h3>
     <table>
       <tr>
-	<th>technology</th>
-	<th>capacity</th>
+	<td>name</td>
+	<td>{{ options["scenario"]["scenario_name"] }}</td>
       </tr>
-      {% for tech,value in summary.items() %}
       <tr>
-	<td>{{ tech }}</td>
-	<td>{{ value[1] }}</td>
+	<td>date and time submitted</td>
+	<td>{{ options["scenario"]["datetime"] }}</td>
       </tr>
-      {% endfor %}
+      <tr>
+	<td>yearly system costs [billion euro per year]</td>
+	<td>{{ (summary["total costs"]/1e9)|round(2) }}</td>
+      </tr>
+      <tr>
+	<td>marginal carbon dioxide abatement cost [EUR/tCO2]</td>
+	<td>{{ summary["co2_shadow"]|round(2) }}</td>
+      </tr>
     </table>
-    <h1>Maps</h1>
+
+    <h3>Download full results</h3>
+
+    <p><a href="../static/results/{{jobid}}/{{jobid}}.zip">zip file of all results</a></p>
+    <p><a href="../static/results/{{jobid}}/postnetwork.nc">PyPSA network file</a></p>
+    <p><a href="../static/results/{{jobid}}/config.yaml">config.yaml file</a></p>
+
+
+    <h3>Maps</h3>
+
+    <p>starting grid | grid reinforcement and other investments | hydrogen network and electrolyser capacity</p>
 
     <img src="../static/results/{{jobid}}/maps/today.png" alt="today's grid">
 
@@ -29,15 +47,25 @@
 
     <img src="../static/results/{{jobid}}/maps/h2_network.png" alt="hydrogen grid">
 
-    <h1>Summary graphs</h1>
+    <h3>Summary graphs</h3>
+
+    <p>breakdown of yearly system costs</p>
 
     <img src="../static/results/{{jobid}}/graphs/costs.png" alt="costs">
 
+    <p>energy supply and demand</p>
+
     <img src="../static/results/{{jobid}}/graphs/energy.png" alt="energy">
+
+    <p>CO2 supply and demand</p>
 
     <img src="../static/results/{{jobid}}/graphs/balances-co2.png" alt="CO2 balances">
 
+    <p>electricity supply and demand</p>
+
     <img src="../static/results/{{jobid}}/graphs/balances-AC.png" alt="AC balances">
+
+    <p>hydrogen supply and demand</p>
 
     <img src="../static/results/{{jobid}}/graphs/balances-H2.png" alt="H2 balances">
 

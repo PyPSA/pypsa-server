@@ -46,6 +46,7 @@ def solve(assumptions):
         default = yaml.safe_load(default_file)
 
     default["run"] = run_name
+    default["scenario"]["datetime"] = str(datetime.datetime.now())
 
     for item in ["scenario_name","co2_limit","frequency"]:
         default["scenario"][item] = assumptions[item]
@@ -92,6 +93,6 @@ def solve(assumptions):
     with open("static/scenarios.csv","a") as f:
         f.write("{},{},{}\n".format(jobid,
                                     default["scenario"]["scenario_name"],
-                                    str(datetime.datetime.now())))
+                                    default["scenario"]["datetime"]))
 
     return {}
