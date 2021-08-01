@@ -575,7 +575,7 @@ def to_csv(df):
 if __name__ == "__main__":
 
     networks_dict = {snakemake.config['scenario']['planning_horizon'] :
-                     snakemake.config['results_dir'] + snakemake.config['run'] + '/postnetwork.nc' }
+                     snakemake.input.network[0]}
 
     print(networks_dict)
 

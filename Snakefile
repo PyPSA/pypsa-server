@@ -42,9 +42,9 @@ rule plot_summary:
 
 rule make_summary:
     input:
-        network=config['results_dir'] + config['run'] + "/postnetwork.nc",
+        network=expand(config['results_dir'] + config['run'] + "/postnetworks/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}.nc",simpl="",clusters=config['scenario']['clusters'],lv=config['scenario']['lv'],opts="",sector_opts="none",planning_horizons=config['scenario']['planning_horizon']),
         costs="data/costs/costs_{}.csv".format(config['scenario']['planning_horizon']),
-        plots=config['results_dir'] + config['run'] + "/maps/costs-all.pdf"
+        plots=expand(config['results_dir'] + config['run'] + "/maps/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}-costs-all_{planning_horizons}.pdf",simpl="",clusters=45,lv=1.0,opts="",sector_opts="none",planning_horizons=config['scenario']['planning_horizon'])
     output:
         nodal_costs=config['summary_dir'] + '/' + config['run'] + '/csvs/nodal_costs.csv',
         nodal_capacities=config['summary_dir'] + '/' + config['run'] + '/csvs/nodal_capacities.csv',
@@ -69,15 +69,15 @@ rule make_summary:
 
 rule solve_network:
     input:
-        network=config['results_dir'] + config['run'] + "/prenetwork.nc",
-        costs="data/costs/costs_{}.csv".format(config['scenario']['planning_horizon'])
-    output: config['results_dir'] + config['run'] + "/postnetwork.nc"
+        network=config['results_dir'] + config['run'] + "/prenetworks/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}.nc",
+        costs="data/costs/costs_{planning_horizons}.csv"
+    output: config['results_dir'] + config['run'] + "/postnetworks/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}.nc"
     shadow: "shallow"
     log:
-        solver=config['results_dir'] + config['run'] + "/logs/solver.log",
-        python=config['results_dir'] + config['run'] + "/logs/python.log",
-        memory=config['results_dir'] + config['run'] + "/logs/memory.log"
-    benchmark: config['results_dir'] + config['run'] + "/benchmarks/solve_network/benchmark"
+        solver=config['results_dir'] + config['run'] + "/logs/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}_solver.log",
+        python=config['results_dir'] + config['run'] + "/logs/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}_python.log",
+        memory=config['results_dir'] + config['run'] + "/logs/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}_memory.log"
+    benchmark: config['results_dir'] + config['run'] + "/benchmarks/solve_network/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}"
     threads: 1
     resources: mem_mb=config['solving']['mem']
     script: "scripts/solve_network.py"
@@ -86,7 +86,7 @@ rule solve_network:
 
 rule prepare_sector_network:
     input:
-        network='resources/elec_s_{}_ec_lv{}_.nc'.format(config['scenario']['clusters'],config['scenario']['lv']),
+        network='resources/elec_s{simpl}_{clusters}_ec_lv{lv}_{opts}.nc',
         energy_totals_name='resources/energy_totals.csv',
         co2_totals_name='resources/co2_totals.csv',
         transport_name='resources/transport_data.csv',
@@ -94,49 +94,49 @@ rule prepare_sector_network:
         biomass_potentials='resources/biomass_potentials.csv',
         timezone_mappings='data/timezone_mappings.csv',
         heat_profile="data/heat_load_profile_BDEW.csv",
-        costs="data/costs/costs_{}.csv".format(config['scenario']['planning_horizon']),
+        costs="data/costs/costs_{planning_horizons}.csv",
 	h2_cavern = "data/hydrogen_salt_cavern_potentials.csv",
         profile_offwind_ac="resources/profile_offwind-ac.nc",
         profile_offwind_dc="resources/profile_offwind-dc.nc",
-        busmap_s="resources/busmap_elec_s.csv",
-        busmap="resources/busmap_elec_s_{}.csv".format(config['scenario']['clusters']),
-        clustered_pop_layout="resources/pop_layout_elec_s_{}.csv".format(config['scenario']['clusters']),
-        simplified_pop_layout="resources/pop_layout_elec_s.csv",
-        industrial_demand="resources/industrial_energy_demand_elec_s_{}.csv".format(config['scenario']['clusters']),
-        heat_demand_urban="resources/heat_demand_urban_elec_s_{}.nc".format(config['scenario']['clusters']),
-        heat_demand_rural="resources/heat_demand_rural_elec_s_{}.nc".format(config['scenario']['clusters']),
-        heat_demand_total="resources/heat_demand_total_elec_s_{}.nc".format(config['scenario']['clusters']),
-        temp_soil_total="resources/temp_soil_total_elec_s_{}.nc".format(config['scenario']['clusters']),
-        temp_soil_rural="resources/temp_soil_rural_elec_s_{}.nc".format(config['scenario']['clusters']),
-        temp_soil_urban="resources/temp_soil_urban_elec_s_{}.nc".format(config['scenario']['clusters']),
-        temp_air_total="resources/temp_air_total_elec_s_{}.nc".format(config['scenario']['clusters']),
-        temp_air_rural="resources/temp_air_rural_elec_s_{}.nc".format(config['scenario']['clusters']),
-        temp_air_urban="resources/temp_air_urban_elec_s_{}.nc".format(config['scenario']['clusters']),
-        cop_soil_total="resources/cop_soil_total_elec_s_{}.nc".format(config['scenario']['clusters']),
-        cop_soil_rural="resources/cop_soil_rural_elec_s_{}.nc".format(config['scenario']['clusters']),
-        cop_soil_urban="resources/cop_soil_urban_elec_s_{}.nc".format(config['scenario']['clusters']),
-        cop_air_total="resources/cop_air_total_elec_s_{}.nc".format(config['scenario']['clusters']),
-        cop_air_rural="resources/cop_air_rural_elec_s_{}.nc".format(config['scenario']['clusters']),
-        cop_air_urban="resources/cop_air_urban_elec_s_{}.nc".format(config['scenario']['clusters']),
-        solar_thermal_total="resources/solar_thermal_total_elec_s_{}.nc".format(config['scenario']['clusters']),
-        solar_thermal_urban="resources/solar_thermal_urban_elec_s_{}.nc".format(config['scenario']['clusters']),
-        solar_thermal_rural="resources/solar_thermal_rural_elec_s_{}.nc".format(config['scenario']['clusters']),
-	retro_cost_energy = "resources/retro_cost_elec_s_{}.csv".format(config['scenario']['clusters']),
-        floor_area = "resources/floor_area_elec_s_{}.csv".format(config['scenario']['clusters'])
-    output: config['results_dir']  +  config['run'] + '/prenetwork.nc'
+        busmap_s="resources/busmap_elec_s{simpl}.csv",
+        busmap="resources/busmap_elec_s{simpl}_{clusters}.csv",
+        clustered_pop_layout="resources/pop_layout_elec_s{simpl}_{clusters}.csv",
+        simplified_pop_layout="resources/pop_layout_elec_s{simpl}.csv",
+        industrial_demand="resources/industrial_energy_demand_elec_s{simpl}_{clusters}.csv",
+        heat_demand_urban="resources/heat_demand_urban_elec_s{simpl}_{clusters}.nc",
+        heat_demand_rural="resources/heat_demand_rural_elec_s{simpl}_{clusters}.nc",
+        heat_demand_total="resources/heat_demand_total_elec_s{simpl}_{clusters}.nc",
+        temp_soil_total="resources/temp_soil_total_elec_s{simpl}_{clusters}.nc",
+        temp_soil_rural="resources/temp_soil_rural_elec_s{simpl}_{clusters}.nc",
+        temp_soil_urban="resources/temp_soil_urban_elec_s{simpl}_{clusters}.nc",
+        temp_air_total="resources/temp_air_total_elec_s{simpl}_{clusters}.nc",
+        temp_air_rural="resources/temp_air_rural_elec_s{simpl}_{clusters}.nc",
+        temp_air_urban="resources/temp_air_urban_elec_s{simpl}_{clusters}.nc",
+        cop_soil_total="resources/cop_soil_total_elec_s{simpl}_{clusters}.nc",
+        cop_soil_rural="resources/cop_soil_rural_elec_s{simpl}_{clusters}.nc",
+        cop_soil_urban="resources/cop_soil_urban_elec_s{simpl}_{clusters}.nc",
+        cop_air_total="resources/cop_air_total_elec_s{simpl}_{clusters}.nc",
+        cop_air_rural="resources/cop_air_rural_elec_s{simpl}_{clusters}.nc",
+        cop_air_urban="resources/cop_air_urban_elec_s{simpl}_{clusters}.nc",
+        solar_thermal_total="resources/solar_thermal_total_elec_s{simpl}_{clusters}.nc",
+        solar_thermal_urban="resources/solar_thermal_urban_elec_s{simpl}_{clusters}.nc",
+        solar_thermal_rural="resources/solar_thermal_rural_elec_s{simpl}_{clusters}.nc",
+	retro_cost_energy = "resources/retro_cost_elec_s{simpl}_{clusters}.csv",
+        floor_area = "resources/floor_area_elec_s{simpl}_{clusters}.csv"
+    output: config['results_dir']  +  config['run'] + '/prenetworks/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}.nc'
     threads: 1
     resources: mem_mb=2000
-    benchmark: config['results_dir'] + config['run'] + "/benchmarks/prepare_network/benchmark"
+    benchmark: config['results_dir'] + config['run'] + "/benchmarks/prepare_network/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}"
     script: "scripts/prepare_sector_network.py"
 
 
 
 rule plot_network:
     input:
-        network=config['results_dir'] + config['run'] + "/postnetwork.nc"
+        network=config['results_dir'] + config['run'] + "/postnetworks/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}.nc"
     output:
-        map=config['results_dir'] + config['run'] + "/maps/costs-all.pdf",
-        today=config['results_dir'] + config['run'] + "/maps/today.pdf"
+        map=config['results_dir'] + config['run'] + "/maps/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}-costs-all_{planning_horizons}.pdf",
+        today=config['results_dir'] + config['run'] + "/maps/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}-today.pdf"
     threads: 2
     resources: mem_mb=10000
     script: "scripts/plot_network.py"
