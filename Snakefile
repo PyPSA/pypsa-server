@@ -44,7 +44,7 @@ rule make_summary:
     input:
         network=expand(config['results_dir'] + config['run'] + "/postnetworks/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}.nc",simpl="",clusters=config['scenario']['clusters'],lv=config['scenario']['lv'],opts="",sector_opts="none",planning_horizons=config['scenario']['planning_horizon']),
         costs="data/costs/costs_{}.csv".format(config['scenario']['planning_horizon']),
-        plots=expand(config['results_dir'] + config['run'] + "/maps/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}-costs-all_{planning_horizons}.pdf",simpl="",clusters=45,lv=1.0,opts="",sector_opts="none",planning_horizons=config['scenario']['planning_horizon'])
+        plots=expand(config['results_dir'] + config['run'] + "/maps/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}-costs-all_{planning_horizons}.pdf",simpl="",clusters=config['scenario']['clusters'],lv=config['scenario']['lv'],opts="",sector_opts="none",planning_horizons=config['scenario']['planning_horizon'])
     output:
         nodal_costs=config['summary_dir'] + '/' + config['run'] + '/csvs/nodal_costs.csv',
         nodal_capacities=config['summary_dir'] + '/' + config['run'] + '/csvs/nodal_capacities.csv',
