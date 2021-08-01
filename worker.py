@@ -73,10 +73,6 @@ def solve(assumptions):
                  "co2_sequestration_cost"]:
         default["sector"][item] = assumptions[item]
 
-    for item in ["St_primary_fraction",
-                 "HVC_primary_fraction"]:
-        default["industry"][item] = assumptions[item]
-
     config_name = os.path.join(dir_name,"config.yaml")
 
     with open(config_name, "w") as output_file:
