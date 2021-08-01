@@ -1,12 +1,14 @@
 
-# PyPSA-server: web interface for running PyPSA scenarios
+# PyPSA-server: web interface for running PyPSA-Eur-Sec scenarios
+
+PyPSA-server allows you to run live online custom optimisations for a sector-coupled model of the European energy system, [PyPSA-Eur-Sec](https://github.com/PyPSA/pypsa-eur-sec). You can, for example, explore different scenarios to reach net-zero carbon dioxide emissions across electricity, heating, transport and industry.
 
 You can find a live version at:
 
 <https://model.energy/scenarios/>
 
 
-## Requirements
+## Software requirements for installation
 
 PyPSA-server has only been tested on the Ubuntu distribution of GNU/Linux.
 
@@ -23,6 +25,13 @@ For (optional) server deployment:
 
 	sudo apt install nginx
 	mamba install gunicorn
+
+## Data requirements for installation
+
+Download and unpack the required data bundle (around 90 MB), derived from [PyPSA-Eur-Sec](https://github.com/PyPSA/pypsa-eur-sec).
+
+	wget https://model.energy/scenarios/static/pypsa-server-data-bundle-210801.zip
+	unzip pypsa-server-data-bundle-210801.zip
 
 ## Run server locally on your own computer
 

@@ -13,8 +13,8 @@ __pycache__
 
 *.org
 
+*.zip
+
 data
 
 resources
-
-results
