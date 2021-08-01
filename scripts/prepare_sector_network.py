@@ -516,7 +516,7 @@ def prepare_data(network):
     #divide out the heating/cooling demand from ICE totals
     ICE_correction = (transport_shape*(1+dd_ICE)).sum()/transport_shape.sum()
 
-    transport = (transport_shape.multiply(nodal_energy_totals["total road"] + nodal_energy_totals["total rail"]
+    transport = options['land_transport_demand']*(transport_shape.multiply(nodal_energy_totals["total road"] + nodal_energy_totals["total rail"]
                                          - nodal_energy_totals["electricity rail"])*1e6*Nyears).divide(efficiency_gain*ICE_correction)
 
     #multiply back in the heating/cooling demand for EVs
@@ -1671,12 +1671,20 @@ def add_industry(network):
     #NB: CO2 gets released again to atmosphere when plastics decay or kerosene is burned
     #except for the process emissions when naphtha is used for petrochemicals, which can be captured with other industry process emissions
     #tco2 per hour
-    co2 = network.loads.loc[["naphtha for industry","kerosene for aviation"],"p_set"].sum()*costs.at["oil",'CO2 intensity'] - industrial_demand.loc[nodes,"process emission from feedstock"].sum()/8760.
+    co2 = network.loads.at["naphtha for industry","p_set"]*costs.at["oil",'CO2 intensity'] - industrial_demand.loc[nodes,"process emission from feedstock"].sum()/8760.
 
     network.madd("Load",
-                 ["oil emissions"],
+                 ["industry oil emissions"],
                  bus="co2 atmosphere",
-                 carrier="oil emissions",
+                 carrier="industry oil emissions",
+                 p_set=-co2)
+
+    co2 = network.loads.at["kerosene for aviation","p_set"]*costs.at["oil",'CO2 intensity']
+
+    network.madd("Load",
+                 ["aviation oil emissions"],
+                 bus="co2 atmosphere",
+                 carrier="aviation oil emissions",
                  p_set=-co2)
 
     network.madd("Load",
@@ -1894,5 +1902,20 @@ if __name__ == "__main__":
         insert_gas_distribution_costs(n)
     if snakemake.config["sector"]['electricity_grid_connection']:
         add_electricity_grid_connection(n)
+
+    elec_loads = n.loads.index[n.loads.carrier == "electricity"]
+    n.loads_t.p_set[elec_loads] *= options['electricity_demand']
+
+    industry_loads = n.loads.index[n.loads.carrier.isin(['solid biomass for industry', 'gas for industry',
+                                                         'H2 for industry', 'naphtha for industry',
+                                                         'low-temperature heat for industry',  'industry oil emissions',
+                                                         'industry electricity', 'process emissions'])]
+    n.loads.loc[industry_loads, 'p_set'] *= options['industry_demand']
+
+    shipping_loads = n.loads.index[n.loads.carrier.isin(['H2 for shipping'])]
+    n.loads.loc[shipping_loads, 'p_set'] *= options['shipping_demand']
+
+    aviation_loads = n.loads.index[n.loads.carrier.isin(['kerosene for aviation', 'aviation oil emissions'])]
+    n.loads.loc[aviation_loads, 'p_set'] *= options['aviation_demand']
 
     n.export_to_netcdf(snakemake.output[0])

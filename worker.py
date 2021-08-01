@@ -68,10 +68,12 @@ def solve(assumptions):
     for item in ["land_transport_electric_share","land_transport_electric_share",
                  "bev_dsm","v2g",
                  "central","tes",
-                 "reduce_space_heat_exogenously_factor",
+                 "electricity_demand","land_transport_demand","shipping_demand","aviation_demand","industry_demand",
                  "co2_sequestration_potential",
                  "co2_sequestration_cost"]:
         default["sector"][item] = assumptions[item]
+
+    default["sector"]["reduce_space_heat_exogenously_factor"] = 1 - assumptions['space_heat_demand']
 
     config_name = os.path.join(dir_name,"config.yaml")
 

@@ -87,6 +87,11 @@ existing_capacities:
   conventional_carriers: ['lignite', 'coal', 'oil', 'uranium']
 
 sector:
+  'electricity_demand' : 1,
+  'land_transport_demand' : 1,
+  'shipping_demand' : 1,
+  'aviation_demand' : 1,
+  'industry_demand' : 1,
   'central' : True
   'central_fraction' : 0.6
   'bev_dsm_restriction_value' : 0.75  #Set to 0 for no restriction on BEV DSM
@@ -375,6 +380,8 @@ plotting:
     "process emissions" : "#222222"
     "oil emissions" : "#666666"
     "land transport oil emissions" : "#666666"
+    "aviation oil emissions" : "#666666"
+    "industry oil emissions" : "#666666"
     "land transport fuel cell" : "#AAAAAA"
     "biogas" : "#800000"
     "solid biomass" : "#DAA520"

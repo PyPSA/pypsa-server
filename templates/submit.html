@@ -25,6 +25,44 @@
       <input type="number" class="form-control" id="frequency" name="frequency" value=1.0>
       <label for="frequency">Sampling frequency n-hourly for representative year, for computational reasons n>=25 [integer]</label>
     </p>
+    <h3>Demand</h3>
+    <p>
+      <input class="form-check-input" type="number" name="electricity_demand" id="electricity_demand" value=1.0>
+      <label class="form-check-label" for="electricity_demand">
+	Demand from electrical devices in residential and services sector compared to today [per unit]
+      </label>
+    </p>
+    <p>
+      <input class="form-check-input" type="number" name="space_heat_demand" id="space_heat_demand" value=1.0>
+      <label class="form-check-label" for="space_heat_demand">
+	Demand from space heating demand compared to today [per unit]
+      </label>
+    </p>
+    <p>
+      <input class="form-check-input" type="number" name="land_transport_demand" id="land_transport_demand" value=1.0>
+      <label class="form-check-label" for="land_transport_demand">
+	Demand for land transport (road and rail) compared to today [per unit]
+      </label>
+    </p>
+    <p>
+      <input class="form-check-input" type="number" name="shipping_demand" id="shipping_demand" value=1.0>
+      <label class="form-check-label" for="shipping_demand">
+	Demand for shipping compared to today [per unit]
+      </label>
+    </p>
+    <p>
+      <input class="form-check-input" type="number" name="aviation_demand" id="aviation_demand" value=1.0>
+      <label class="form-check-label" for="aviation_demand">
+	Demand for aviation compared to today [per unit]
+      </label>
+    </p>
+    <p>
+      <input class="form-check-input" type="number" name="industry_demand" id="industry_demand" value=1.0>
+      <label class="form-check-label" for="industry_demand">
+	Demand in industry compared to today [per unit]
+      </label>
+    </p>
+
     <h3>Sector coupling options</h3>
     <p>
       <input class="form-check-input" type="number" name="land_transport_electric_share" id="land_transport_electric_share" value=1.0>
@@ -60,12 +98,6 @@
       <input class="form-check-input" type="checkbox" name="tes" id="tes" checked>
       <label class="form-check-label" for="tes">
 	Allow thermal energy storage
-      </label>
-    </p>
-    <p>
-      <input class="form-check-input" type="number" name="reduce_space_heat_exogenously_factor" id="reduce_space_heat_exogenously_factor" value=1.0>
-      <label class="form-check-label" for="reduce_space_heat_exogenously_factor">
-	Reduction in space heating demand due to building retrofitting and replacement [per unit]
       </label>
     </p>
     <p>
