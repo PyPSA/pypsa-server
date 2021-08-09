@@ -14,15 +14,15 @@ def rename_techs(label):
 
     prefix_to_remove = ["residential ","services ","urban ","rural ","central ","decentral "]
 
-    rename_if_contains = ["CHP","gas boiler","biogas","solar thermal","air heat pump","ground heat pump","resistive heater","Fischer-Tropsch"]
+    rename_if_contains = ["biomass CHP","gas CHP","gas boiler","biogas","solar thermal","air heat pump","ground heat pump","resistive heater","Fischer-Tropsch"]
 
     rename_if_contains_dict = {"water tanks" : "hot water storage",
                                "retrofitting" : "building retrofitting",
-                               "H2" : "hydrogen storage",
                                "battery" : "battery storage",
                                "CC" : "CC"}
 
-    rename = {"solar" : "solar PV",
+    rename = {"solar" : "solar PV utility",
+              "solar rooftop" : "solar PV rooftop",
               "Sabatier" : "methanation",
               "offwind" : "offshore wind",
               "offwind-ac" : "offshore wind (AC)",
@@ -33,6 +33,7 @@ def rename_techs(label):
               "PHS" : "hydroelectricity",
               "co2 Store" : "DAC",
               "co2 stored" : "CO2 sequestration",
+              "H2" : "hydrogen storage",
               "AC" : "transmission lines",
               "DC" : "transmission lines",
               "B2B" : "transmission lines"}
@@ -55,7 +56,7 @@ def rename_techs(label):
     return label
 
 
-preferred_order = pd.Index(["transmission lines","hydroelectricity","hydro reservoir","run of river","pumped hydro storage","solid biomass","biogas","onshore wind","offshore wind","offshore wind (AC)","offshore wind (DC)","solar PV","solar thermal","solar","building retrofitting","ground heat pump","air heat pump","heat pump","resistive heater","power-to-heat","gas-to-power/heat","CHP","OCGT","gas boiler","gas","natural gas","helmeth","methanation","hydrogen storage","power-to-gas","power-to-liquid","battery storage","hot water storage","CO2 sequestration"])
+preferred_order = pd.Index(["transmission lines","hydroelectricity","hydro reservoir","run of river","pumped hydro storage","solid biomass","biogas","onshore wind","offshore wind","offshore wind (AC)","offshore wind (DC)","solar PV utility","solar PV rooftop","solar thermal","solar","building retrofitting","ground heat pump","air heat pump","heat pump","resistive heater","power-to-heat","gas-to-power/heat","biomass CHP","gas CHP","CHP","OCGT","gas boiler","gas","natural gas","helmeth","methanation","hydrogen storage","H2 Electrolysis","H2 Fuel Cell","H2 pipeline","power-to-gas","power-to-liquid","battery storage","hot water storage","CO2 sequestration"])
 
 def plot_costs():
 

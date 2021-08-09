@@ -284,8 +284,10 @@ plotting:
     'hydroelectricity' : '#006400'
     'solar' : "y"
     'solar PV' : "y"
+    'solar PV utility' : "y"
     'solar thermal' : 'coral'
     'solar rooftop' : '#e6b800'
+    'solar PV rooftop' : '#e6b800'
     "OCGT" : "wheat"
     "OCGT marginal" : "sandybrown"
     "OCGT-heat" : "orange"
@@ -301,7 +303,12 @@ plotting:
     "lines" : "k"
     "transmission lines" : "k"
     "H2" : "m"
-    "hydrogen storage" : "m"
+    "hydrogen storage" : "#FF70FF"
+    "H2 Electrolysis" : "#AF00AF"
+    "H2 Fuel Cell" : "#FF50FF"
+    "H2 pipeline" : "#EB00EB"
+    "H2 for industry" : "#FF70FF"
+    "H2 for shipping" : "#AF90AF"
     "battery" : "slategray"
     "battery storage" : "slategray"
     "home battery" : "#614700"
@@ -349,6 +356,8 @@ plotting:
     "hot water charging" : "#BBBBBB"
     "hot water discharging" : "#999999"
     "CHP" : "r"
+    "gas CHP" : "r"
+    "biomass CHP" : "#FF8888"
     "CHP heat" : "r"
     "CHP electric" : "r"
     "PHS" : "g"
