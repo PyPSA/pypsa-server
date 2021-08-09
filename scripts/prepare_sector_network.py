@@ -590,7 +590,7 @@ def add_generation(network):
 
     conventionals = [("OCGT","gas")]
 
-    for generator,carrier in [("OCGT","gas")]:
+    for generator,carrier in [("OCGT","gas"),("nuclear","uranium")]:
         network.add("Carrier",
                     carrier)
 
@@ -1892,9 +1892,12 @@ if __name__ == "__main__":
             gens = n.generators.index[n.generators.carrier.str.contains(gen) & ~n.generators.carrier.str.contains("solar rooftop")]
         else:
             gens = n.generators.index[n.generators.carrier.str.contains(gen)]
+
         n.generators.loc[gens,"p_nom_max"] *= snakemake.config["scenario"][gen + "_potential"]
         n.generators.loc[gens,"capital_cost"] *= snakemake.config["scenario"][gen + "_cost"]
 
+
+    n.links.loc[n.links.index[n.links.carrier == "nuclear"],"capital_cost"] *= snakemake.config["scenario"]["nuclear_cost"]
     n.links.loc[n.links.index[n.links.carrier == "H2 Electrolysis"],"capital_cost"] *= snakemake.config["scenario"]["electrolysis_cost"]
     n.links.loc[n.links.index[n.links.carrier == "H2 pipeline"],"capital_cost"] *= snakemake.config["scenario"]["h2_pipeline_cost"]
 

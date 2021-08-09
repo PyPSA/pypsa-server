@@ -48,7 +48,7 @@ floats = ["co2_limit",
           "electricity_demand","land_transport_demand","shipping_demand","aviation_demand","industry_demand",
           "co2_sequestration_potential",
           "solar_potential","onwind_potential","offwind_potential",
-          "solar_cost","onwind_cost","offwind_cost","electrolysis_cost",
+          "solar_cost","onwind_cost","offwind_cost","electrolysis_cost","nuclear_cost",
           "electrolysis_cost", "h2_pipeline_cost","co2_sequestration_cost"]
 
 strings = ["scenario_name"]

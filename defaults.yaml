@@ -6,3 +6,4 @@ onwind_cost: 963
 offwind_cost: 1416
 electrolysis_cost: 500
 h2_pipeline_cost: 267
+nuclear_cost: 7940

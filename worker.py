@@ -61,7 +61,7 @@ def solve(assumptions):
     for tech in ["solar","onwind","offwind"]:
         default["scenario"][tech + "_potential"] = assumptions[tech + "_potential"]
 
-    for tech in ["solar","onwind","offwind","electrolysis","h2_pipeline"]:
+    for tech in ["solar","onwind","offwind","nuclear","electrolysis","h2_pipeline"]:
         #scenario cost is ratio to default cost
         default["scenario"][tech + "_cost"] = assumptions[tech + "_cost"]/defaults[tech + "_cost"]
 

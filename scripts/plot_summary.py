@@ -59,7 +59,7 @@ def rename_techs(label):
     return label
 
 
-preferred_order = pd.Index(["transmission lines","electricity distribution grid","hydroelectricity","hydro reservoir","run of river","pumped hydro storage","solid biomass","biogas","oil","fossil oil","onshore wind","offshore wind","offshore wind (AC)","offshore wind (DC)","solar PV utility","solar PV rooftop","solar thermal","solar","building retrofitting","ground heat pump","air heat pump","heat pump","resistive heater","power-to-heat","gas-to-power/heat","biomass CHP","gas CHP","CHP","OCGT","gas boiler","gas","fossil gas","natural gas","helmeth","methanation","hydrogen storage","H2 Electrolysis","H2 Fuel Cell","H2 pipeline","power-to-gas","power-to-liquid","battery storage","hot water storage","CO2 sequestration"])
+preferred_order = pd.Index(["transmission lines","electricity distribution grid","hydroelectricity","hydro reservoir","run of river","pumped hydro storage","solid biomass","biogas","oil","fossil oil","nuclear","onshore wind","offshore wind","offshore wind (AC)","offshore wind (DC)","solar PV utility","solar PV rooftop","solar thermal","solar","building retrofitting","ground heat pump","air heat pump","heat pump","resistive heater","power-to-heat","gas-to-power/heat","biomass CHP","gas CHP","CHP","OCGT","gas boiler","gas","fossil gas","natural gas","helmeth","methanation","hydrogen storage","H2 Electrolysis","H2 Fuel Cell","H2 pipeline","power-to-gas","power-to-liquid","battery storage","hot water storage","CO2 sequestration"])
 
 def plot_costs():
 
@@ -128,7 +128,7 @@ def plot_capacities():
 
     df = df.groupby(df.index.map(rename_techs)).sum()
 
-    selection = ["gas CHP","biomass CHP","H2 Fuel Cell","OCGT","solar PV rooftop","solar PV utility","offshore wind (DC)","offshore wind (AC)","onshore wind","hydroelectricity","Fischer-Tropsch","H2 Electrolysis","resistive heater","air heat pump","ground heat pump"]
+    selection = ["gas CHP","biomass CHP","H2 Fuel Cell","OCGT","nuclear","solar PV rooftop","solar PV utility","offshore wind (DC)","offshore wind (AC)","onshore wind","hydroelectricity","Fischer-Tropsch","H2 Electrolysis","resistive heater","air heat pump","ground heat pump"]
 
     df = df.loc[selection]
 
@@ -147,7 +147,7 @@ def plot_capacities():
 
     ax.set_ylim([0,1.1*s.max()])
 
-    ax.set_ylabel("capacity [GW$_{el}$")
+    ax.set_ylabel("capacity [GW$_{el}$]")
 
     ax.set_xlabel("")
 
