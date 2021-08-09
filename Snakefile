@@ -29,9 +29,11 @@ rule plot_summary:
     input:
         costs=config['summary_dir'] + '/' + config['run'] + '/csvs/costs.csv',
         energy=config['summary_dir'] + '/' + config['run'] + '/csvs/energy.csv',
-        balances=config['summary_dir'] + '/' + config['run'] + '/csvs/supply_energy.csv'
+        balances=config['summary_dir'] + '/' + config['run'] + '/csvs/supply_energy.csv',
+        capacities=config['summary_dir'] + '/' + config['run'] + '/csvs/capacities.csv'
     output:
         costs=config['summary_dir'] + '/' + config['run'] + '/graphs/costs.pdf',
+        capacities=config['summary_dir'] + '/' + config['run'] + '/graphs/capacities.pdf',
         energy=config['summary_dir'] + '/' + config['run'] + '/graphs/energy.pdf',
         balances=config['summary_dir'] + '/' + config['run'] + '/graphs/balances-energy.pdf'
     threads: 2

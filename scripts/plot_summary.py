@@ -34,6 +34,9 @@ def rename_techs(label):
               "co2 Store" : "DAC",
               "co2 stored" : "CO2 sequestration",
               "H2" : "hydrogen storage",
+              "electricity" : "non-industrial electricity",
+              "gas" : "fossil gas",
+              "oil" : "fossil oil",
               "AC" : "transmission lines",
               "DC" : "transmission lines",
               "B2B" : "transmission lines"}
@@ -56,7 +59,7 @@ def rename_techs(label):
     return label
 
 
-preferred_order = pd.Index(["transmission lines","hydroelectricity","hydro reservoir","run of river","pumped hydro storage","solid biomass","biogas","onshore wind","offshore wind","offshore wind (AC)","offshore wind (DC)","solar PV utility","solar PV rooftop","solar thermal","solar","building retrofitting","ground heat pump","air heat pump","heat pump","resistive heater","power-to-heat","gas-to-power/heat","biomass CHP","gas CHP","CHP","OCGT","gas boiler","gas","natural gas","helmeth","methanation","hydrogen storage","H2 Electrolysis","H2 Fuel Cell","H2 pipeline","power-to-gas","power-to-liquid","battery storage","hot water storage","CO2 sequestration"])
+preferred_order = pd.Index(["transmission lines","electricity distribution grid","hydroelectricity","hydro reservoir","run of river","pumped hydro storage","solid biomass","biogas","oil","fossil oil","onshore wind","offshore wind","offshore wind (AC)","offshore wind (DC)","solar PV utility","solar PV rooftop","solar thermal","solar","building retrofitting","ground heat pump","air heat pump","heat pump","resistive heater","power-to-heat","gas-to-power/heat","biomass CHP","gas CHP","CHP","OCGT","gas boiler","gas","fossil gas","natural gas","helmeth","methanation","hydrogen storage","H2 Electrolysis","H2 Fuel Cell","H2 pipeline","power-to-gas","power-to-liquid","battery storage","hot water storage","CO2 sequestration"])
 
 def plot_costs():
 
@@ -111,6 +114,52 @@ def plot_costs():
 
     fig.savefig(snakemake.output.costs,transparent=True)
     fig.savefig(snakemake.output.costs.replace("pdf","png"),transparent=True)
+
+
+def plot_capacities():
+
+    df = pd.read_csv(snakemake.input.capacities,index_col=list(range(2)),header=list(range(n_header)))
+
+
+    df = df.groupby(level=1).sum()
+
+    #convert to GW
+    df = df/1e3
+
+    df = df.groupby(df.index.map(rename_techs)).sum()
+
+    selection = ["gas CHP","biomass CHP","H2 Fuel Cell","OCGT","solar PV rooftop","solar PV utility","offshore wind (DC)","offshore wind (AC)","onshore wind","hydroelectricity","Fischer-Tropsch","H2 Electrolysis","resistive heater","air heat pump","ground heat pump"]
+
+    df = df.loc[selection]
+
+    fig, ax = plt.subplots()
+    fig.set_size_inches((12,8))
+
+    s = df.iloc[:,0]
+
+    s.plot(kind="bar",ax=ax,color=[snakemake.config['plotting']['tech_colors'][i] for i in s.index])
+
+
+    handles,labels = ax.get_legend_handles_labels()
+
+    handles.reverse()
+    labels.reverse()
+
+    ax.set_ylim([0,1.1*s.max()])
+
+    ax.set_ylabel("capacity [GW$_{el}$")
+
+    ax.set_xlabel("")
+
+    ax.grid(axis="y")
+
+    ax.legend(handles,labels,ncol=4,loc="upper left")
+
+
+    fig.tight_layout()
+
+    fig.savefig(snakemake.output.capacities,transparent=True)
+    fig.savefig(snakemake.output.capacities.replace("pdf","png"),transparent=True)
 
 
 def plot_energy():
@@ -324,6 +373,8 @@ if __name__ == "__main__":
     n_header = 1
 
     plot_costs()
+
+    plot_capacities()
 
     plot_energy()
 
