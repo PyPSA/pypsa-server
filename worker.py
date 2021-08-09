@@ -65,7 +65,7 @@ def solve(assumptions):
         #scenario cost is ratio to default cost
         default["scenario"][tech + "_cost"] = assumptions[tech + "_cost"]/defaults[tech + "_cost"]
 
-    for item in ["land_transport_electric_share","land_transport_electric_share",
+    for item in ["land_transport_electric_share","land_transport_fuel_cell_share",
                  "bev_dsm","v2g",
                  "central","tes",
                  "electricity_demand","land_transport_demand","shipping_demand","aviation_demand","industry_demand",
