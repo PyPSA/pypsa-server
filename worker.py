@@ -48,7 +48,7 @@ def solve(assumptions):
     default["run"] = run_name
     default["scenario"]["datetime"] = str(datetime.datetime.now())
 
-    for item in ["scenario_name","co2_limit","frequency"]:
+    for item in ["scenario_name","co2_limit","frequency","line_volume","linemax_extension"]:
         default["scenario"][item] = assumptions[item]
 
     for forbidden in [",","\n"]:
@@ -58,10 +58,16 @@ def solve(assumptions):
     if default["scenario"]["frequency"] < 25:
         return {"error" : "Frequency must be 25-hourly or greater for computational reasons"}
 
+    if default["scenario"]["line_volume"] < 1.0:
+        return {"error" : "Line volume limit must be greater than 1.0"}
+
+    if default["scenario"]["linemax_extension"] < 0:
+        return {"error" : "Maximum line extension must be greater than 0"}
+
     for tech in ["solar","onwind","offwind"]:
         default["scenario"][tech + "_potential"] = assumptions[tech + "_potential"]
 
-    for tech in ["solar","onwind","offwind","nuclear","electrolysis","h2_pipeline"]:
+    for tech in ["solar","onwind","offwind","nuclear","electrolysis","h2_pipeline","land_transmission"]:
         #scenario cost is ratio to default cost
         default["scenario"][tech + "_cost"] = assumptions[tech + "_cost"]/defaults[tech + "_cost"]
 

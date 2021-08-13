@@ -157,7 +157,7 @@ def plot_map(network, components=["links", "stores", "storage_units", "generator
 
     # PDF has minimum width, so set these to zero
     line_lower_threshold = 500.
-    line_upper_threshold = 1e4
+    line_upper_threshold = 3e4
     linewidth_factor = 2e3
     ac_color = "gray"
     dc_color = "m"
@@ -329,7 +329,7 @@ def plot_map_without(network):
 
     # PDF has minimum width, so set these to zero
     line_lower_threshold = 200.
-    line_upper_threshold = 1e4
+    line_upper_threshold = 3e4
     linewidth_factor = 2e3
     ac_color = "gray"
     dc_color = "m"

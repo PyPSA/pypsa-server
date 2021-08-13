@@ -129,6 +129,11 @@
       <label for="electrolysis_cost">Investment cost for hydrogen electrolysis [EUR/kW]</label>
     </p>
     <p>
+      <input type="number" class="form-control" id="land_transmission_cost" name="land_transmission_cost" value=1.0>
+      <label for="land_transmission_cost">Investment cost for high-voltage electricity transmission over land (around 400 for overhead lines, around 2000 for underground cables) [EUR/MW/km]</label>
+    </p>
+    <p>
+    <p>
       <input type="number" class="form-control" id="h2_pipeline_cost" name="h2_pipeline_cost" value=1.0>
       <label for="h2_pipeline_cost">Investment cost for new hydrogen pipelines [EUR/MW/km]</label>
     </p>
@@ -152,6 +157,16 @@
       <input type="number" class="form-control" id="offwind_potential" name="offwind_potential" value=1.0>
       <label for="offwind_potential">Allowed fraction of default offshore wind installable potential [per unit]</label>
     </p>
+    <h3>Electricity transmission network reinforcement constraints</h3>
+    <p>
+      <input type="number" class="form-control" id="linemax_extension" name="linemax_extension" value=1.0>
+      <label for="linemax_extension">Maximum capacity addition to a single transmission corridor [GW]</label>
+    </p>
+    <p>
+      <input type="number" class="form-control" id="line_volume" name="line_volume" value=1.0>
+      <label for="line_volume">Maximum volume of transmission grid (capacity multiplied by length of each line then summed) compared to today; must be greater than 1, e.g. 1.25 means 25% more transmission volume than today [per unit]</label>
+    </p>
+
     <h3>Submit</h3>
     <p>Warning: the model can take several minutes to finish.</p>
     <p>

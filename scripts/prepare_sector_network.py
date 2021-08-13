@@ -284,47 +284,34 @@ def set_line_s_max_pu(n):
     n.links.loc[dc_b, 'p_max_pu'] = snakemake.config['links']['p_max_pu']
     n.links.loc[dc_b, 'p_min_pu'] = - snakemake.config['links']['p_max_pu']
 
-def set_line_volume_limit(n, lv):
+def set_line_volume_limit(n, limit):
 
     dc_b = n.links.carrier == 'DC'
 
-    if lv != "opt":
-        lv = float(lv)
+    n.lines['capital_cost'] = (n.lines['length'] *
+                               snakemake.config["scenario"]["land_transmission_cost"]*costs.at['HVAC overhead', 'fixed'])
 
-        # Either line_volume cap or cost
-        n.lines['capital_cost'] = 0.
-        n.links.loc[dc_b,'capital_cost'] = 0.
-    else:
-        n.lines['capital_cost'] = (n.lines['length'] *
-                                   costs.at['HVAC overhead', 'fixed'])
+    n.links.loc[dc_b, 'capital_cost'] = (n.links.loc[dc_b, 'length'] *
+                                         ((1. - n.links.loc[dc_b, 'underwater_fraction'])*snakemake.config["scenario"]["land_transmission_cost"]*costs.at['HVDC overhead', 'fixed'] + n.links.loc[dc_b, 'underwater_fraction']*costs.at['HVDC submarine', 'fixed']))   + costs.at['HVDC inverter pair', 'fixed']
 
-        #add HVDC inverter post factor, to maintain consistency with LV limit
-        n.links.loc[dc_b, 'capital_cost'] = (n.links.loc[dc_b, 'length'] *
-                                             costs.at['HVDC overhead', 'fixed'])# +
-                                             #costs.at['HVDC inverter pair', 'fixed'])
+    lines_s_nom = n.lines.s_nom.where(
+        n.lines.type == '',
+        np.sqrt(3) * n.lines.num_parallel *
+        n.lines.type.map(n.line_types.i_nom) *
+        n.lines.bus0.map(n.buses.v_nom)
+    )
 
+    n.lines['s_nom_min'] = lines_s_nom
+    n.links.loc[dc_b,'p_nom_min'] = n.links['p_nom']
 
+    n.lines['s_nom_extendable'] = True
+    n.links.loc[dc_b,'p_nom_extendable'] = True
 
-    if lv != 1.0:
-        lines_s_nom = n.lines.s_nom.where(
-            n.lines.type == '',
-            np.sqrt(3) * n.lines.num_parallel *
-            n.lines.type.map(n.line_types.i_nom) *
-            n.lines.bus0.map(n.buses.v_nom)
-        )
+    n.line_volume_limit = limit * ((lines_s_nom * n.lines['length']).sum() +
+                                   n.links.loc[dc_b].eval('p_nom * length').sum())
 
-        n.lines['s_nom_min'] = lines_s_nom
-
-        n.links.loc[dc_b,'p_nom_min'] = n.links['p_nom']
-
-        n.lines['s_nom_extendable'] = True
-        n.links.loc[dc_b,'p_nom_extendable'] = True
-
-        if lv != "opt":
-            n.line_volume_limit = lv * ((lines_s_nom * n.lines['length']).sum() +
-                                        n.links.loc[dc_b].eval('p_nom * length').sum())
-
-    return n
+    #added by PyPSA-Eur, remove here
+    n.global_constraints.drop("lv_limit",inplace=True)
 
 def average_every_nhours(n, offset):
     logger.info('Resampling the network to {}'.format(offset))
@@ -1920,5 +1907,7 @@ if __name__ == "__main__":
 
     aviation_loads = n.loads.index[n.loads.carrier.isin(['kerosene for aviation', 'aviation oil emissions'])]
     n.loads.loc[aviation_loads, 'p_set'] *= options['aviation_demand']
+
+    set_line_volume_limit(n, snakemake.config["scenario"]['line_volume'])
 
     n.export_to_netcdf(snakemake.output[0])

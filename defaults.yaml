@@ -7,3 +7,4 @@ offwind_cost: 1416
 electrolysis_cost: 500
 h2_pipeline_cost: 267
 nuclear_cost: 7940
+land_transmission_cost: 400

@@ -10,7 +10,7 @@ run: 'replace_by_server'
 foresight: 'overnight'  #options are overnight, myopic, perfect
 
 scenario:
-  lv: 1.0 #, 1.125, 1.25, 1.5, 2.0]# or opt
+  lv: opt #, 1.125, 1.25, 1.5, 2.0]# or opt
   clusters: 45 #[37m,90, 128, 181] #[45, 64, 90, 128, 181, 256] #, 362] # (2**np.r_[5.5:9:.5]).astype(int) minimum is 37
   frequency: 456
   transport: True
@@ -23,10 +23,12 @@ scenario:
   onwind_cost: 1.
   electrolysis_cost: 1.
   h2_pipeline_cost: 1.
+  land_transmission_cost: 1.
   solar_potential: 1.
   offwind_potential: 1.
   onwind_potential: 1.
   linemax_extension: 10. # [456H-T-H-B-I-solar+p3-offwind+p0.67-dist1-linemaxext10]
+  line_volume: 1.5
   co2_limit: 0.
   # Co2L will give default (5%); Co2L0p25 will give 25% CO2 emissions; Co2Lm0p05 will give 5% negative emissions
   planning_horizon: 2050 #timesteps for myopic and perfect
