@@ -118,7 +118,7 @@ def submit():
 @app.route('/results')
 def results():
     scenarios = pd.read_csv("static/scenarios.csv",
-                            names=["jobid","scenario_name","datetime","diff"])
+                            names=["jobid","scenario_name","datetime","diff"]).fillna("")
     print(scenarios)
     return render_template('results.html',
                            scenarios=scenarios.T.to_dict())
