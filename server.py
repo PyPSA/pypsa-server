@@ -44,7 +44,7 @@ booleans = ["bev_dsm","v2g","central","tes"]
 
 floats = ["co2_limit",
           "land_transport_electric_share","land_transport_fuel_cell_share",
-          "space_heat_demand",
+          "space_heat_demand","water_heat_demand",
           "electricity_demand","land_transport_demand","shipping_demand","aviation_demand","industry_demand",
           "co2_sequestration_potential",
           "solar_potential","onwind_potential","offwind_potential",

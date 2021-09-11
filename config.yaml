@@ -43,6 +43,7 @@ scenario:
   land_transport_electric_share: 0.85
   land_transport_fuel_cell_share: 0.15
   space_heat_demand : 0.71
+  water_heat_demand : 1.
   electricity_demand : 0.9
   land_transport_demand : 1.
   shipping_demand : 1.

@@ -48,7 +48,8 @@ def solve(assumptions):
                  "land_transport_electric_share","land_transport_fuel_cell_share",
                  "bev_dsm","v2g",
                  "central","tes",
-                 "space_heat_demand", "electricity_demand","land_transport_demand","shipping_demand","aviation_demand","industry_demand",
+                 "space_heat_demand", "water_heat_demand", "electricity_demand","land_transport_demand",
+                 "shipping_demand","aviation_demand","industry_demand",
                  "co2_sequestration_potential",
                  "co2_sequestration_cost"]:
         default["scenario"][item] = assumptions[item]

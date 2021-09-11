@@ -1101,10 +1101,10 @@ def add_heat(network):
 
     urban_fraction = options['central_fraction']*pop_layout["urban"]/(pop_layout[["urban","rural"]].sum(axis=1))
 
-    # exogenously reduce space heat demand
-    if options["reduce_space_heat_exogenously"]:
-        for sector in sectors:
-            heat_demand[sector + " space"] = scenario["space_heat_demand"]*heat_demand[sector + " space"]
+    # exogenously reduce heat demand
+    for sector in sectors:
+        heat_demand[sector + " space"] *= scenario["space_heat_demand"]
+        heat_demand[sector + " water"] *= scenario["water_heat_demand"]
 
     heat_systems = ["residential rural", "services rural",
                     "residential urban decentral","services urban decentral",
