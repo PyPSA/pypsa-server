@@ -91,7 +91,7 @@ def sanitise_assumptions(assumptions):
         except:
             return "{} {} could not be converted to float".format(key,assumptions[key]), None
 
-        if assumptions[key] < 0 or assumptions[key] > float_upper_limit:
+        if key != "co2_limit" and (assumptions[key] < 0 or assumptions[key] > float_upper_limit):
             return "{} {} was not in the valid range [0,{}]".format(key,assumptions[key],float_upper_limit), None
 
     for key in ints:
