@@ -272,7 +272,7 @@ def solve_network(n, config=None, solver_log=None, opts=None):
                                                solver_name=solver_name,
                                                solver_logfile=solver_log,
                                                solver_options=solver_options,
-                                               solver_dir=tmpdir, 
+                                               solver_dir=tmpdir,
                                                extra_functionality=extra_functionality,
                                                formulation=solve_opts['formulation'])
                                                #extra_postprocessing=extra_postprocessing
@@ -355,7 +355,8 @@ def solve_network(n, config=None, solver_log=None, opts=None):
         #     fn = os.path.basename(snakemake.output[0])
         #     n.export_to_netcdf('/home/vres/data/jonas/playground/pypsa-eur/' + fn)
 
-    status, termination_condition = run_lopf(n, allow_warning_status=True, fix_ext_lines=True)
+    #skip run with fixed transmission lines - unnecessary for server
+    #status, termination_condition = run_lopf(n, allow_warning_status=True, fix_ext_lines=True)
 
     # Drop zero lines from network
     # zero_lines_i = n.lines.index[(n.lines.s_nom_opt == 0.) & n.lines.s_nom_extendable]
