@@ -104,7 +104,7 @@ def update_wind_solar_costs(n,costs):
             #e.g. clusters == 37m means that VRE generators are left
             #at clustering of simplified network, but that they are
             #connected to 37-node network
-            if str(snakemake.config["scenario"]["clusters"])[-1:] == "m":
+            if str(scenario["clusters"])[-1:] == "m":
                 genmap = busmap_s
             else:
                 genmap = clustermaps
@@ -207,8 +207,8 @@ def add_co2_tracking(n):
 
     n.madd("Store",["co2 stored"],
            e_nom_extendable=True,
-           e_nom_max=options['co2_sequestration_potential']*1e6,
-           capital_cost=options['co2_sequestration_cost'],
+           e_nom_max=scenario['co2_sequestration_potential']*1e6,
+           capital_cost=scenario['co2_sequestration_cost'],
            carrier="co2 stored",
            bus="co2 stored")
 
@@ -248,11 +248,11 @@ def add_co2limit(n, Nyears=1.,limit=0.):
 
     co2_limit = co2_totals.loc[cts, "electricity"].sum()
 
-    if snakemake.config["scenario"]["transport"]:
+    if scenario["transport"]:
         co2_limit += co2_totals.loc[cts, [i+ " non-elec" for i in ["rail","road"]]].sum().sum()
-    if snakemake.config["scenario"]["heating"]:
+    if scenario["heating"]:
         co2_limit += co2_totals.loc[cts, [i+ " non-elec" for i in ["residential","services"]]].sum().sum()
-    if snakemake.config["scenario"]["industry"]:
+    if scenario["industry"]:
         co2_limit += co2_totals.loc[cts, ["industrial non-elec","industrial processes",
                                           "domestic aviation","international aviation",
                                           "domestic navigation","international navigation"]].sum().sum()
@@ -288,11 +288,10 @@ def set_line_volume_limit(n, limit):
 
     dc_b = n.links.carrier == 'DC'
 
-    n.lines['capital_cost'] = (n.lines['length'] *
-                               snakemake.config["scenario"]["land_transmission_cost"]*costs.at['HVAC overhead', 'fixed'])
+    n.lines['capital_cost'] = (n.lines['length']*costs.at['HVAC overhead', 'fixed'])
 
     n.links.loc[dc_b, 'capital_cost'] = (n.links.loc[dc_b, 'length'] *
-                                         ((1. - n.links.loc[dc_b, 'underwater_fraction'])*snakemake.config["scenario"]["land_transmission_cost"]*costs.at['HVDC overhead', 'fixed'] + n.links.loc[dc_b, 'underwater_fraction']*costs.at['HVDC submarine', 'fixed']))   + costs.at['HVDC inverter pair', 'fixed']
+                                         ((1. - n.links.loc[dc_b, 'underwater_fraction'])*costs.at['HVDC overhead', 'fixed'] + n.links.loc[dc_b, 'underwater_fraction']*costs.at['HVDC submarine', 'fixed']))   + costs.at['HVDC inverter pair', 'fixed']
 
     lines_s_nom = n.lines.s_nom.where(
         n.lines.type == '',
@@ -503,7 +502,7 @@ def prepare_data(network):
     #divide out the heating/cooling demand from ICE totals
     ICE_correction = (transport_shape*(1+dd_ICE)).sum()/transport_shape.sum()
 
-    transport = options['land_transport_demand']*(transport_shape.multiply(nodal_energy_totals["total road"] + nodal_energy_totals["total rail"]
+    transport = scenario['land_transport_demand']*(transport_shape.multiply(nodal_energy_totals["total road"] + nodal_energy_totals["total rail"]
                                          - nodal_energy_totals["electricity rail"])*1e6*Nyears).divide(efficiency_gain*ICE_correction)
 
     #multiply back in the heating/cooling demand for EVs
@@ -547,10 +546,20 @@ def prepare_data(network):
 
 
 
-def prepare_costs(cost_file, USD_to_EUR, discount_rate, Nyears, lifetime):
+def prepare_costs(cost_file, USD_to_EUR, discount_rate, Nyears, lifetime, scenario):
 
     #set all asset costs and other parameters
     costs = pd.read_csv(cost_file,index_col=list(range(2))).sort_index()
+
+    if scenario is not None:
+        costs.at[('solar-utility','investment'), 'value'] = scenario['solar_cost']  #302
+        costs.at[('onwind','investment'), 'value'] = scenario['onwind_cost']  #963
+        costs.at[('offwind','investment'), 'value'] = scenario['offwind_cost']  #1416
+        costs.at[('nuclear','investment'), 'value'] = scenario['nuclear_cost']  #7940
+        costs.at[('electrolysis','investment'), 'value'] = scenario['electrolysis_cost']  #500
+        costs.at[('H2 pipeline','investment'), 'value'] = scenario['h2_pipeline_cost']  #267
+        costs.at[('HVDC overhead','investment'), 'value'] = scenario['land_transmission_cost']  #400
+        costs.at[('HVAC overhead','investment'), 'value'] = scenario['land_transmission_cost']  #400
 
     #correct units to MW and EUR
     costs.loc[costs.unit.str.contains("/kW"),"value"]*=1e3
@@ -567,6 +576,7 @@ def prepare_costs(cost_file, USD_to_EUR, discount_rate, Nyears, lifetime):
                           "investment" : 0,
                           "lifetime" : lifetime
     })
+
 
     costs["fixed"] = [(annuity(v["lifetime"],v["discount rate"])+v["FOM"]/100.)*v["investment"]*Nyears for i,v in costs.iterrows()]
     return costs
@@ -698,7 +708,7 @@ def insert_electricity_distribution_grid(network):
     solar = network.generators.index[network.generators.carrier == "solar"]
     network.generators.loc[solar, "capital_cost"] = costs.at['solar-utility',
                                                              'fixed']
-    if str(snakemake.config["scenario"]["clusters"])[-1:] == "m":
+    if str(scenario["clusters"])[-1:] == "m":
         pop_solar = simplified_pop_layout.total.rename(index = lambda x: x + " solar")
     else:
         pop_solar = pop_layout.total.rename(index = lambda x: x + " solar")
@@ -974,8 +984,8 @@ def add_land_transport(network):
 
     print("adding land transport")
 
-    fuel_cell_share = get_parameter(options["land_transport_fuel_cell_share"])
-    electric_share = get_parameter(options["land_transport_electric_share"])
+    fuel_cell_share = scenario["land_transport_fuel_cell_share"]
+    electric_share = scenario["land_transport_electric_share"]
     ice_share = 1 - fuel_cell_share - electric_share
 
     print("shares of FCEV, EV and ICEV are",
@@ -1024,7 +1034,7 @@ def add_land_transport(network):
                      #capital_cost=1e6,  #i.e. so high it only gets built where necessary
         )
 
-        if options["v2g"]:
+        if scenario["v2g"]:
 
             network.madd("Link",
                          nodes,
@@ -1038,7 +1048,7 @@ def add_land_transport(network):
 
 
 
-        if options["bev_dsm"]:
+        if scenario["bev_dsm"]:
 
             network.madd("Store",
                          nodes,
@@ -1093,10 +1103,8 @@ def add_heat(network):
 
     # exogenously reduce space heat demand
     if options["reduce_space_heat_exogenously"]:
-        dE = get_parameter(options["reduce_space_heat_exogenously_factor"])
-        print("assumed space heat reduction of {} %".format(dE*100))
         for sector in sectors:
-            heat_demand[sector + " space"] = (1-dE)*heat_demand[sector + " space"]
+            heat_demand[sector + " space"] = scenario["space_heat_demand"]*heat_demand[sector + " space"]
 
     heat_systems = ["residential rural", "services rural",
                     "residential urban decentral","services urban decentral",
@@ -1156,7 +1164,7 @@ def add_heat(network):
                      lifetime=costs.at[costs_name,'lifetime'])
 
 
-        if options["tes"]:
+        if scenario["tes"]:
 
             network.add("Carrier",name + " water tanks")
 
@@ -1292,7 +1300,7 @@ def add_heat(network):
 
         print("adding retrofitting endogenously")
 
-        frequency = str(snakemake.config["scenario"]["frequency"]) + "H"
+        frequency = str(scenario["frequency"]) + "H"
         # resample heat demand temporal 'heat_demand_r' depending on in config
         # specified temporal resolution, to not overestimate retrofitting
         heat_demand_r =  heat_demand.resample(frequency).mean()
@@ -1392,7 +1400,7 @@ def create_nodes_for_heat_sector():
     for sector in sectors:
         nodes[sector + " rural"] = pop_layout.index
 
-        if options["central"]:
+        if scenario["central"]:
             urban_decentral_ct = pd.Index(["ES", "GR", "PT", "IT", "BG"])
             nodes[sector + " urban decentral"] = pop_layout.index[pop_layout.ct.isin(urban_decentral_ct)]
         else:
@@ -1790,8 +1798,9 @@ if __name__ == "__main__":
     timezone_mappings = pd.read_csv(snakemake.input.timezone_mappings,index_col=0,squeeze=True,header=None)
 
     options = snakemake.config["sector"]
+    scenario = snakemake.config["scenario"]
 
-    investment_year=int(snakemake.config["scenario"]["planning_horizon"])
+    investment_year=int(scenario["planning_horizon"])
 
     n = pypsa.Network(snakemake.input.network,
                       override_component_attrs=override_component_attrs)
@@ -1810,7 +1819,8 @@ if __name__ == "__main__":
                           snakemake.config['costs']['USD2013_to_EUR2013'],
                           snakemake.config['costs']['discountrate'],
                           Nyears,
-                          snakemake.config['costs']['lifetime'])
+                          snakemake.config['costs']['lifetime'],
+                          scenario)
 
     remove_elec_base_techs(n)
 
@@ -1834,37 +1844,37 @@ if __name__ == "__main__":
 
     nodal_energy_totals, heat_demand, ashp_cop, gshp_cop, solar_thermal, transport, avail_profile, dsm_profile, co2_totals, nodal_transport_data = prepare_data(n)
 
-    if snakemake.config["scenario"]["transport"]:
+    if scenario["transport"]:
         add_land_transport(n)
 
-    if snakemake.config["scenario"]["heating"]:
+    if scenario["heating"]:
         add_heat(n)
 
-    if snakemake.config["scenario"]["biomass"]:
+    if scenario["biomass"]:
         add_biomass(n)
 
-    if snakemake.config["scenario"]["industry"]:
+    if scenario["industry"]:
         add_industry(n)
 
-    if snakemake.config["scenario"]["industry"] and snakemake.config["scenario"]["heating"]:
+    if scenario["industry"] and scenario["heating"]:
         add_waste_heat(n)
 
     if options['dac']:
         add_dac(n)
 
-    if snakemake.config["scenario"]["decentral"]:
+    if scenario["decentral"]:
         decentral(n)
 
-    if snakemake.config["scenario"]["noH2network"]:
+    if scenario["noH2network"]:
         remove_h2_network(n)
 
-    n = average_every_nhours(n, str(snakemake.config["scenario"]["frequency"]) + "H")
+    n = average_every_nhours(n, str(scenario["frequency"]) + "H")
 
-    limit = snakemake.config["scenario"]["co2_limit"]
+    limit = scenario["co2_limit"]
     print("adding CO2 budget limit as per unit of 1990 levels of",limit)
     add_co2limit(n, Nyears, limit)
 
-    maxext = snakemake.config["scenario"]["linemax_extension"]*1e3
+    maxext = scenario["linemax_extension"]*1e3
     print("limiting new HVAC and HVDC extensions to",maxext,"MW")
     n.lines['s_nom_max'] = n.lines['s_nom'] + maxext
     hvdc = n.links.index[n.links.carrier == 'DC']
@@ -1880,13 +1890,7 @@ if __name__ == "__main__":
         else:
             gens = n.generators.index[n.generators.carrier.str.contains(gen)]
 
-        n.generators.loc[gens,"p_nom_max"] *= snakemake.config["scenario"][gen + "_potential"]
-        n.generators.loc[gens,"capital_cost"] *= snakemake.config["scenario"][gen + "_cost"]
-
-
-    n.links.loc[n.links.index[n.links.carrier == "nuclear"],"capital_cost"] *= snakemake.config["scenario"]["nuclear_cost"]
-    n.links.loc[n.links.index[n.links.carrier == "H2 Electrolysis"],"capital_cost"] *= snakemake.config["scenario"]["electrolysis_cost"]
-    n.links.loc[n.links.index[n.links.carrier == "H2 pipeline"],"capital_cost"] *= snakemake.config["scenario"]["h2_pipeline_cost"]
+        n.generators.loc[gens,"p_nom_max"] *= scenario[gen + "_potential"]
 
     if snakemake.config["sector"]['gas_distribution_grid']:
         insert_gas_distribution_costs(n)
@@ -1894,20 +1898,20 @@ if __name__ == "__main__":
         add_electricity_grid_connection(n)
 
     elec_loads = n.loads.index[n.loads.carrier == "electricity"]
-    n.loads_t.p_set[elec_loads] *= options['electricity_demand']
+    n.loads_t.p_set[elec_loads] *= scenario['electricity_demand']
 
     industry_loads = n.loads.index[n.loads.carrier.isin(['solid biomass for industry', 'gas for industry',
                                                          'H2 for industry', 'naphtha for industry',
                                                          'low-temperature heat for industry',  'industry oil emissions',
                                                          'industry electricity', 'process emissions'])]
-    n.loads.loc[industry_loads, 'p_set'] *= options['industry_demand']
+    n.loads.loc[industry_loads, 'p_set'] *= scenario['industry_demand']
 
     shipping_loads = n.loads.index[n.loads.carrier.isin(['H2 for shipping'])]
-    n.loads.loc[shipping_loads, 'p_set'] *= options['shipping_demand']
+    n.loads.loc[shipping_loads, 'p_set'] *= scenario['shipping_demand']
 
     aviation_loads = n.loads.index[n.loads.carrier.isin(['kerosene for aviation', 'aviation oil emissions'])]
-    n.loads.loc[aviation_loads, 'p_set'] *= options['aviation_demand']
+    n.loads.loc[aviation_loads, 'p_set'] *= scenario['aviation_demand']
 
-    set_line_volume_limit(n, snakemake.config["scenario"]['line_volume'])
+    set_line_volume_limit(n, scenario['line_volume'])
 
     n.export_to_netcdf(snakemake.output[0])

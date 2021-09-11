@@ -585,7 +585,8 @@ if __name__ == "__main__":
                              snakemake.config['costs']['USD2013_to_EUR2013'],
                              snakemake.config['costs']['discountrate'],
                              Nyears,
-                             snakemake.config['costs']['lifetime'])
+                             snakemake.config['costs']['lifetime'],
+                             None)
 
     df = make_summaries(networks_dict)
 

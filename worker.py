@@ -14,13 +14,9 @@
 ## https://github.com/PyPSA/pypsa-server
 
 
-
-
 import os, snakemake, yaml, datetime
 from rq import get_current_job
 
-with open('defaults.yaml','r') as f:
-    defaults = yaml.safe_load(f)
 
 def solve(assumptions):
 
@@ -48,8 +44,24 @@ def solve(assumptions):
     default["run"] = run_name
     default["scenario"]["datetime"] = str(datetime.datetime.now())
 
-    for item in ["scenario_name","co2_limit","frequency","line_volume","linemax_extension"]:
+    for item in ["scenario_name","co2_limit","frequency","line_volume","linemax_extension",
+                 "land_transport_electric_share","land_transport_fuel_cell_share",
+                 "bev_dsm","v2g",
+                 "central","tes",
+                 "space_heat_demand", "electricity_demand","land_transport_demand","shipping_demand","aviation_demand","industry_demand",
+                 "co2_sequestration_potential",
+                 "co2_sequestration_cost"]:
         default["scenario"][item] = assumptions[item]
+
+    for tech in ["solar","onwind","offwind"]:
+        default["scenario"][tech + "_potential"] = assumptions[tech + "_potential"]
+
+    for tech in ["solar","onwind","offwind","nuclear","electrolysis","h2_pipeline","land_transmission"]:
+        #scenario cost is ratio to default cost
+        default["scenario"][tech + "_cost"] = assumptions[tech + "_cost"]
+
+
+    #check assumptions are clean
 
     for forbidden in [",","\n"]:
         if forbidden in default["scenario"]["scenario_name"]:
@@ -63,23 +75,6 @@ def solve(assumptions):
 
     if default["scenario"]["linemax_extension"] < 0:
         return {"error" : "Maximum line extension must be greater than 0"}
-
-    for tech in ["solar","onwind","offwind"]:
-        default["scenario"][tech + "_potential"] = assumptions[tech + "_potential"]
-
-    for tech in ["solar","onwind","offwind","nuclear","electrolysis","h2_pipeline","land_transmission"]:
-        #scenario cost is ratio to default cost
-        default["scenario"][tech + "_cost"] = assumptions[tech + "_cost"]/defaults[tech + "_cost"]
-
-    for item in ["land_transport_electric_share","land_transport_fuel_cell_share",
-                 "bev_dsm","v2g",
-                 "central","tes",
-                 "electricity_demand","land_transport_demand","shipping_demand","aviation_demand","industry_demand",
-                 "co2_sequestration_potential",
-                 "co2_sequestration_cost"]:
-        default["sector"][item] = assumptions[item]
-
-    default["sector"]["reduce_space_heat_exogenously_factor"] = 1 - assumptions['space_heat_demand']
 
     config_name = os.path.join(dir_name,"config.yaml")
 

@@ -12,18 +12,19 @@ foresight: 'overnight'  #options are overnight, myopic, perfect
 scenario:
   lv: opt #, 1.125, 1.25, 1.5, 2.0]# or opt
   clusters: 45 #[37m,90, 128, 181] #[45, 64, 90, 128, 181, 256] #, 362] # (2**np.r_[5.5:9:.5]).astype(int) minimum is 37
-  frequency: 456
+  frequency: 193
   transport: True
   biomass: True
   heating: True
   biomass: True
   industry: True
-  solar_cost: 1.
-  offwind_cost: 1.
-  onwind_cost: 1.
-  electrolysis_cost: 1.
-  h2_pipeline_cost: 1.
-  land_transmission_cost: 1.
+  solar_cost: 302
+  offwind_cost: 1416
+  onwind_cost: 963
+  nuclear_cost : 7940
+  electrolysis_cost: 500
+  h2_pipeline_cost: 267
+  land_transmission_cost: 400
   solar_potential: 1.
   offwind_potential: 1.
   onwind_potential: 1.
@@ -34,6 +35,21 @@ scenario:
   planning_horizon: 2050 #timesteps for myopic and perfect
   decentral: False
   noH2network: False
+  tes : True
+  central : True
+  v2g : True #allows feed-in to grid from EV battery
+  bev_dsm : True #turns on EV battery
+  #what is not EV or FCEV is oil-fuelled
+  land_transport_electric_share: 0.85
+  land_transport_fuel_cell_share: 0.15
+  space_heat_demand : 0.71
+  electricity_demand : 0.9
+  land_transport_demand : 1.
+  shipping_demand : 1.
+  aviation_demand : 1.2
+  industry_demand : 0.9
+  co2_sequestration_potential : 200  #MtCO2/a sequestration potential for Europe
+  co2_sequestration_cost : 20   #EUR/tCO2 for transport and sequestration of CO2
 
 # CO2 budget as a fraction of 1990 emissions
 # this is over-ridden if CO2Lx is set in sector_opts
@@ -89,12 +105,6 @@ existing_capacities:
   conventional_carriers: ['lignite', 'coal', 'oil', 'uranium']
 
 sector:
-  'electricity_demand' : 1,
-  'land_transport_demand' : 1,
-  'shipping_demand' : 1,
-  'aviation_demand' : 1,
-  'industry_demand' : 1,
-  'central' : True
   'central_fraction' : 0.6
   'bev_dsm_restriction_value' : 0.75  #Set to 0 for no restriction on BEV DSM
   'bev_dsm_restriction_time' : 7  #Time at which SOC of BEV has to be dsm_restriction_value
@@ -105,20 +115,7 @@ sector:
   'EV_lower_degree_factor' : 0.98
   'EV_upper_degree_factor' : 0.63
   'district_heating_loss' : 0.15
-  'bev_dsm' : True #turns on EV battery
   'bev_availability' : 0.5  #How many cars do smart charging
-  'v2g' : True #allows feed-in to grid from EV battery
-  #what is not EV or FCEV is oil-fuelled
-  'land_transport_fuel_cell_share': # 1 means all FCEVs
-    2020: 0
-    2030: 0.05
-    2040: 0.1
-    2050: 0.15
-  'land_transport_electric_share': # 1 means all EVs
-    2020: 0
-    2030: 0.25
-    2040: 0.6
-    2050: 0.85
   'transport_fuel_cell_efficiency': 0.5
   'transport_internal_combustion_efficiency': 0.3
   'shipping_average_efficiency' : 0.4 #For conversion of fuel oil to propulsion in 2011
@@ -128,15 +125,6 @@ sector:
   'reduce_space_heat_exogenously': True  # reduces space heat demand by a given factor (applied before losses in DH)
   # this can represent e.g. building renovation, building demolition, or if
   # the factor is negative: increasing floor area, increased thermal comfort, population growth
-  'reduce_space_heat_exogenously_factor': # per unit reduction in space heat demand
-  # the default factors are determined by the LTS scenario from http://tool.european-calculator.eu/app/buildings/building-types-area/?levers=1ddd4444421213bdbbbddd44444ffffff11f411111221111211l212221
-          2020:    0.10  # this results in a space heat demand reduction of 10%
-          2025:    0.09  # first heat demand increases compared to 2020 because of larger floor area per capita
-          2030:    0.09
-          2035:    0.11
-          2040:    0.16
-          2045:    0.21
-          2050:    0.29
   'retrofitting' :
     'retro_endogen': False  # co-optimise space heat savings
     'cost_factor' : 1.0
@@ -144,7 +132,6 @@ sector:
     'annualise_cost': True  # annualise the investment costs
     'tax_weighting': False   # weight costs depending on taxes in countries
     'construction_index': True   # weight costs depending on labour/material costs per ct
-  'tes' : True
   'tes_tau' : 3.
   'boilers' : True
   'oil_boilers': False
@@ -158,8 +145,6 @@ sector:
   'dac' : True
   'co2_vent' : False
   'SMR' : True
-  'co2_sequestration_potential' : 200  #MtCO2/a sequestration potential for Europe
-  'co2_sequestration_cost' : 20   #EUR/tCO2 for transport and sequestration of CO2
   'cc_fraction' : 0.9  # default fraction of CO2 captured with post-combustion capture
   'hydrogen_underground_storage' : True
   'use_fischer_tropsch_waste_heat' : True
