@@ -36,6 +36,22 @@
     <p><a href="../static/results/{{jobid}}/postnetworks/elec_s_{{ options['scenario']['clusters'] }}_lv{{ options['scenario']['lv'] }}__none_{{ options['scenario']['planning_horizon'] }}.nc">PyPSA network file</a></p>
     <p><a href="../static/results/{{jobid}}/config.yaml">config.yaml file</a></p>
 
+    <h3>Assumption differences from default</h3>
+    <table>
+      <tr>
+	<th>assumption</th>
+	<th>default</th>
+	<th>this scenario</th>
+      </tr>
+      {% for key in diff.keys() %}
+      <tr>
+	<td>{{ key }}</td>
+	<td>{{ diff[key][0] }}</td>
+	<td>{{ diff[key][1] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+
     <h3>Maps</h3>
 
     <p>starting grid | grid reinforcement and other investments | hydrogen network and electrolyser capacity</p>

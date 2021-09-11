@@ -118,7 +118,7 @@ def submit():
 @app.route('/results')
 def results():
     scenarios = pd.read_csv("static/scenarios.csv",
-                            names=["jobid","scenario_name","datetime"])
+                            names=["jobid","scenario_name","datetime","diff"])
     print(scenarios)
     return render_template('results.html',
                            scenarios=scenarios.T.to_dict())
@@ -141,9 +141,13 @@ def resultsid(jobid):
     with open(f"static/results/{jobid}/config.yaml",'r') as f:
         options = yaml.safe_load(f)
 
+    with open(f"static/results/{jobid}/diff.yaml",'r') as f:
+        diff = yaml.safe_load(f)
+
     return render_template('result.html',
                            jobid=jobid,
                            options=options,
+                           diff=diff,
                            summary=summary.to_dict())
 
 

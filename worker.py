@@ -41,6 +41,8 @@ def solve(assumptions):
     with open("config.yaml", "r") as default_file:
         default = yaml.safe_load(default_file)
 
+    original_assumptions = default["scenario"].copy()
+
     default["run"] = run_name
     default["scenario"]["datetime"] = str(datetime.datetime.now())
 
@@ -78,9 +80,22 @@ def solve(assumptions):
         return {"error" : "Maximum line extension must be greater than 0"}
 
     config_name = os.path.join(dir_name,"config.yaml")
-
     with open(config_name, "w") as output_file:
         yaml.dump(default, output_file)
+
+    diff = {}
+    for key in original_assumptions:
+        if original_assumptions[key] != default["scenario"][key]:
+            diff[key] = [original_assumptions[key],default["scenario"][key]]
+
+    diff_name = os.path.join(dir_name,"diff.yaml")
+    with open(diff_name, "w") as output_file:
+        yaml.dump(diff, output_file)
+
+    diff_string = ""
+    for key in diff:
+        diff_string += f"{key}: {diff[key][0]} -> {diff[key][1]}; "
+    diff_string = diff_string[:-2]
 
     job.meta['status'] = "Running snakemake workflow"
     job.save_meta()
@@ -91,8 +106,9 @@ def solve(assumptions):
         return {"error" : "Snakemake failed"}
 
     with open("static/scenarios.csv","a") as f:
-        f.write("{},{},{}\n".format(jobid,
-                                    default["scenario"]["scenario_name"],
-                                    default["scenario"]["datetime"]))
+        f.write("{},{},{},{}\n".format(jobid,
+                                       default["scenario"]["scenario_name"],
+                                       default["scenario"]["datetime"],
+                                       diff_string))
 
     return {}
