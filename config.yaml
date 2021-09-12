@@ -18,13 +18,13 @@ scenario:
   heating: True
   biomass: True
   industry: True
-  solar_cost: 302
-  offwind_cost: 1416
-  onwind_cost: 963
-  nuclear_cost : 7940
-  electrolysis_cost: 500
-  h2_pipeline_cost: 267
-  land_transmission_cost: 400
+  solar_cost: 302.
+  offwind_cost: 1416.
+  onwind_cost: 963.
+  nuclear_cost : 7940.
+  electrolysis_cost: 500.
+  h2_pipeline_cost: 267.
+  land_transmission_cost: 400.
   solar_potential: 1.
   offwind_potential: 1.
   onwind_potential: 1.
@@ -49,8 +49,8 @@ scenario:
   shipping_demand : 1.
   aviation_demand : 1.2
   industry_demand : 0.9
-  co2_sequestration_potential : 200  #MtCO2/a sequestration potential for Europe
-  co2_sequestration_cost : 20   #EUR/tCO2 for transport and sequestration of CO2
+  co2_sequestration_potential : 200.  #MtCO2/a sequestration potential for Europe
+  co2_sequestration_cost : 20.   #EUR/tCO2 for transport and sequestration of CO2
 
 # CO2 budget as a fraction of 1990 emissions
 # this is over-ridden if CO2Lx is set in sector_opts
@@ -306,7 +306,7 @@ plotting:
     "Nuclear" : "r"
     "Nuclear marginal" : "r"
     "nuclear" : "r"
-    "uranium" : "r"
+    "uranium" : "#FF7F7F"
     "Coal" : "k"
     "coal" : "k"
     "Coal marginal" : "k"
