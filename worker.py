@@ -16,7 +16,7 @@
 
 import os, snakemake, yaml, datetime
 from rq import get_current_job
-
+import pandas as pd
 
 def solve(assumptions):
 
@@ -105,10 +105,17 @@ def solve(assumptions):
     if not success:
         return {"error" : "Snakemake failed"}
 
+    summary = pd.read_csv(f"static/results/{jobid}/csvs/metrics.csv",
+                          names=["item","value"],
+                          index_col=0,
+                          squeeze=True)
+
     with open("static/scenarios.csv","a") as f:
-        f.write("{},{},{},{}\n".format(jobid,
+        f.write("{},{},{},{},{},{}\n".format(jobid,
                                        default["scenario"]["scenario_name"],
                                        default["scenario"]["datetime"],
+                                       summary["co2_shadow"],
+                                       summary["total costs"],
                                        diff_string))
 
     return {}

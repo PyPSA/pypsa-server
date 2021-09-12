@@ -191,3 +191,8 @@ input[type=text]{
     background-color: #fff;
     opacity: 1;
 }
+
+
+th, td {
+    padding-right: 15px;
+}

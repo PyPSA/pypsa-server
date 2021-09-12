@@ -14,6 +14,8 @@
 	<th>date and time submitted</th>
 	<th>name</th>
 	<th>id</th>
+	<th>system costs [bnEUR/a]</th>
+	<th>marginal abatement cost [EUR/tCO2]</th>
 	<th>difference to default</th>
       </tr>
       {% for scenario in scenarios.values() %}
@@ -21,6 +23,8 @@
 	<td>{{ scenario["datetime"] }}</td>
 	<td>{{ scenario["scenario_name"] }}</td>
 	<td><a href="results/{{ scenario["jobid"] }}">{{ scenario["jobid"] }}</a></td>
+	<td>{{ (scenario["total_costs"]/1e9)|round(2) }}</td>
+	<td>{{ scenario["co2_shadow"]|round(2) }}</td>
 	<td>{{ scenario["diff"] }}</td>
       </tr>
       {% endfor %}
