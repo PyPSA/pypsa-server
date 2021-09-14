@@ -31,6 +31,8 @@ import json, os, hashlib, yaml
 
 import pandas as pd
 
+job_timeout=1200
+
 conn = Redis()
 
 queue = Queue('pypsa', connection=conn)
@@ -165,7 +167,7 @@ def jobs():
         if error_message is not None:
             return jsonify({"status" : "Error", "error" : error_message})
 
-        job = queue.enqueue("worker.solve", args=(assumptions,), job_timeout=600)
+        job = queue.enqueue("worker.solve", args=(assumptions,), job_timeout=job_timeout)
         result = {"jobid" : job.get_id()}
         return jsonify(result)
     elif request.method == "GET":
