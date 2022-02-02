@@ -1805,7 +1805,7 @@ if __name__ == "__main__":
     n = pypsa.Network(snakemake.input.network,
                       override_component_attrs=override_component_attrs)
 
-    Nyears = n.snapshot_weightings.sum()/8760.
+    Nyears = n.snapshot_weightings.objective.sum()/8760.
 
     pop_layout = pd.read_csv(snakemake.input.clustered_pop_layout,index_col=0)
     pop_layout["ct"] = pop_layout.index.str[:2]

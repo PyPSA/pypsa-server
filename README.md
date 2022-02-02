@@ -60,7 +60,7 @@ Use nginx, gunicorn for the Python server, rq, and manage with supervisor.
 
 ## License
 
-Copyright 2021 Tom Brown <https://nworbmot.org/>
+Copyright 2021-2 Tom Brown <https://nworbmot.org/>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as
