@@ -194,15 +194,18 @@ solving:
     # nhours: 1
 
   solver:
-    name: gurobi
-    threads: 4
-    method: 2 # barrier
-    crossover: 0
-    BarConvTol: 1.e-5
-    Seed: 456
-    AggFill: 0
-    PreDual: 0
-    GURO_PAR_BARDENSETHRESH: 200
+    name: highs
+    #parallel: on
+    #run_crossover: False
+    #name: gurobi
+    #threads: 4
+    #method: 2 # barrier
+    #crossover: 0
+    #BarConvTol: 1.e-5
+    #Seed: 456
+    #AggFill: 0
+    #PreDual: 0
+    #GURO_PAR_BARDENSETHRESH: 200
     #FeasibilityTol: 1.e-6
 
     #name: cplex

@@ -19,15 +19,9 @@
     <p><a href="results">See previously calculated scenarios</a></p>
 
     <h3>Only free software and open data</h3>
-    <p>The user interface and optimisation model construction and
+    <p>The user interface, optimisation model construction, solver and
        post-processing are all built with free software and open data
-       only. The commercial optimisation
-       solver <a href="https://www.gurobi.com">Gurobi</a> is used for
-       its high performance on this website, but it can also be
-       replaced with an open source solver such
-       as <a href="https://github.com/coin-or/Clp">Clp</a> if
-       performance is not required.  The code for all parts except the
-       solver can be downloaded from the GitHub
+       only. The code can be downloaded from the GitHub
        repository <a href="https://github.com/PyPSA/pypsa-server">pypsa-server</a>. It
        uses the <a href="https://github.com/PyPSA/PyPSA">Python for
        Power System Analysis (PyPSA)</a> energy optimisation
@@ -38,14 +32,14 @@
        the <a href="https://github.com/PyPSA/atlite">atlite
        library</a> for converting weather data to generation profiles,
        and free software for the server infrastructure (GNU/Linux,
-       nginx, Flask, gunicorn, Redis).</p>
+      nginx, Flask, gunicorn, Redis). The optimisation problem is
+      solved by the high-performance open source solver <a href="https://www.maths.ed.ac.uk/hall/HiGHS/">HiGHS</a>.</p>
 
     <h3>Limitations</h3>
     <p>There are many limitations to the model. Some infrastructure may not meet with societal acceptance, or may not be feasible to build given supply chain and personnel training limitations. On the modelling side, in this simplified model there are not enough model regions to simulate the energy networks properly, nor enough spatial and temporal resolution to see the full variability of wind, solar and demand. Ideally decades of weather data would be used to sample historical weather patterns, as well as data that takes into account future climate change.</p>
     <h3>Contributors and thanks</h3>
     <p><a href="https://nworbmot.org/">Tom Brown</a> conceived and developed the website.</p>
     <p>We thank all the developers of the other free software on which this website depends.</p>
-    <p>We thank <a href="https://www.gurobi.com">Gurobi</a> for providing a fully featured commercial licence for the optimisation solver in order to enhance the performance of this website.</p>
     <h3>Privacy statement</h3>
     <p>No personal information is stored on the server. There are no cookies.</p>
     <p>Simulation assumptions and results for each job are stored on the server.</p>
