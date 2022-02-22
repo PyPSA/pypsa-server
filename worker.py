@@ -1,4 +1,4 @@
-## Copyright 2021 Tom Brown
+## Copyright 2021-2 Tom Brown
 
 ## This program is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU Affero General Public License as
@@ -53,7 +53,8 @@ def solve(assumptions):
                  "space_heat_demand", "water_heat_demand", "electricity_demand","land_transport_demand",
                  "shipping_demand","aviation_demand","industry_demand",
                  "co2_sequestration_potential",
-                 "co2_sequestration_cost"]:
+                 "co2_sequestration_cost",
+                 "hashid"]:
         default["scenario"][item] = assumptions[item]
 
     for tech in ["solar","onwind","offwind"]:
@@ -111,11 +112,12 @@ def solve(assumptions):
                           squeeze=True)
 
     with open("static/scenarios.csv","a") as f:
-        f.write("{},{},{},{},{},{}\n".format(jobid,
-                                       default["scenario"]["scenario_name"],
-                                       default["scenario"]["datetime"],
-                                       summary["co2_shadow"],
-                                       summary["total costs"],
-                                       diff_string))
+        f.write("{},{},{},{},{},{},{}\n".format(jobid,
+                                                default["scenario"]["scenario_name"],
+                                                default["scenario"]["datetime"],
+                                                summary["co2_shadow"],
+                                                summary["total costs"],
+                                                diff_string,
+                                                default["scenario"]["hashid"]))
 
     return {}

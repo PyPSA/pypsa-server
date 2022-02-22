@@ -97,7 +97,7 @@ function solve() {
 	send_job.setRequestHeader("Content-Type", "application/json");
 	send_job.onload = function () {
 	    var data = JSON.parse(this.response);
-	    if("jobid" in data){
+	    if(data["status"] == "Solving"){
 		jobid = data["jobid"];
 		console.log("Jobid:",jobid);
 		timer = setInterval(poll_result, poll_interval);
@@ -107,7 +107,11 @@ function solve() {
 		solveButton.text(solveButtonText["after"]);
 		solveButton.attr("disabled","");
 		document.getElementById("status").innerHTML="Sending job to solver";
-	    } else if("status" in data && data["status"] == "Error") {
+	    } else if(data["status"] == "Solved") {
+		jobid = data["jobid"];
+		console.log("Jobid:",jobid);
+		document.getElementById("status").innerHTML='This set of assumptions has already been computed and can be viewed at <a href="results/' + jobid + '">' + jobid + '</a>.' ;
+	    } else if(data["status"] == "Error") {
 		console.log("results:", data);
 		document.getElementById("status").innerHTML = data["status"] + ": " + data["error"];
 	    } else {

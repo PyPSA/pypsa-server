@@ -5,7 +5,7 @@ static/results/
 
 static/50m/
 
-static/scenarios.csv
+static/scenarios*
 
 __pycache__
 

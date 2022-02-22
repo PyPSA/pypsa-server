@@ -108,6 +108,13 @@ def sanitise_assumptions(assumptions):
     return None, assumptions
 
 
+def compute_assumptions_hash(assumptions):
+    results_string = ""
+    for item in ints+booleans+floats:
+        results_string += "&{}={}".format(item,assumptions[item])
+    hashid = hashlib.md5(results_string.encode()).hexdigest()
+    return hashid
+
 #defaults to only listen to GET and HEAD
 @app.route('/')
 def root():
@@ -120,7 +127,7 @@ def submit():
 @app.route('/results')
 def results():
     scenarios = pd.read_csv("static/scenarios.csv",
-                            names=["jobid","scenario_name","datetime","co2_shadow","total_costs","diff"]).fillna("")
+                            names=["jobid","scenario_name","datetime","co2_shadow","total_costs","diff","hashid"]).fillna("")
     print(scenarios)
     print(scenarios.dtypes)
     return render_template('results.html',
@@ -162,14 +169,29 @@ def jobs():
 
         print(request.json)
 
+
+        scenarios = pd.read_csv("static/scenarios.csv",
+                                names=["jobid","scenario_name","datetime","co2_shadow","total_costs","diff","hashid"]).fillna("")
+
+
         error_message, assumptions = sanitise_assumptions(request.json)
 
         if error_message is not None:
             return jsonify({"status" : "Error", "error" : error_message})
 
-        job = queue.enqueue("worker.solve", args=(assumptions,), job_timeout=job_timeout)
-        result = {"jobid" : job.get_id()}
-        return jsonify(result)
+        hashid = compute_assumptions_hash(assumptions)
+        assumptions["hashid"] = hashid
+
+        if hashid in scenarios["hashid"].values:
+            print(hashid,"already computed")
+            jobid = scenarios["jobid"][scenarios["hashid"] == hashid].iat[0]
+            result = {"status" : "Solved", "jobid" : jobid}
+            return jsonify(result)
+        else:
+            job = queue.enqueue("worker.solve", args=(assumptions,), job_timeout=job_timeout)
+            result = {"status" : "Solving", "jobid" : job.get_id()}
+            return jsonify(result)
+
     elif request.method == "GET":
         return "jobs in queue: {}".format(len(queue.jobs))
 
