@@ -4,11 +4,21 @@
     <title>PyPSA server</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="./static/scenarios.css">
   </head>
 
-  <body>
-    <h1>Previously calculated scenarios</h1>
+  <body id="page-top">
+  
+    <header class="bg-primary text-white">
+      <div class="container text-center">
+        <h1>Previously calculated scenarios</h1>
+      </div>
+    </header>
+  
+    <div class="container-fluid">
+
+    <br></br>
     <table>
       <tr>
 	<th>date and time submitted</th>
@@ -29,5 +39,7 @@
       </tr>
       {% endfor %}
     </table>
+
+  </div>
   </body>
 </html>
