@@ -4,84 +4,216 @@
     <title>PyPSA server</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.css"/>
     <link rel="stylesheet" type="text/css" href="./static/scenarios.css">
   </head>
 
-  <body>
-    <h1>Submit a new scenario</h1>
+  <body id="page-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Submit a new scenario</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#overview">Overview</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#basic-settings">Basic Settings</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#demand">Demand</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#sector-coupling">Sector coupling options</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#costs">Costs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#potentials">Potentials</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#transmission">Electricity transmission network reinforcement constraints</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#submit">Submit</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+  <header class="bg-primary text-white">
+    <div class="container text-center">
+      <h1>Submit a new scenario</h1>
+    </div>
+  </header>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-3 toc-col">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+
+      <div class="col-md-12 col-lg-9">
+        <div class="container-like">
+    
+    <section id="overview">
+    <h2 data-toc-text="Overview">Overview</h2>
+    <hr>
+    
     <p>Here you can customise settings for the model <a href="https://github.com/PyPSA/pypsa-eur-sec">PyPSA-Eur-Sec</a>, a sector-coupled model of the European energy system.  The model minimises the costs of the energy system assuming all capacity investments in generation, storage, energy conversion and energy transport can be re-optimised.
       Energy services (electricity, heating, transport, industrial demand) are provided at today's levels by default, but they can also be altered. Default cost assumptions are taken from forecasts for 2050, mainly from the <a href="https://ens.dk/en/our-services/projections-and-models/technology-data">Danish Energy Agency Technology Data</a>. A weighted average cost of capital of 7% is applied.  45 regions are assumed. A full year of representative weather and load data is used, but sampled n-hourly.</p>
     <p>193-hourly temporal resolution takes only around 1 minute to solve, but gives reasonable results. This model can only be run at up to 25-hourly resolution (25-hourly takes around 10 minutes to run). Higher resolutions are not offered here because of the computational burden. If you want to run at up to hourly resolution, download the full model and run it yourself, or contact us to discuss terms.</p>
-    <h3>Basic scenario settings</h3>
+    
+    <section id="basic-settings">
+    <h2>Basic scenario settings</h2>
+    <hr>
     <p>
-      <input type="text" class="form-control" id="scenario_name" name="scenario_name" value="no name" size="16">
       <label for="scenario_name">Scenario name so you can identify the scenario later</label>
-    </p>
-    <p>
-      <input type="number" class="form-control" id="co2_limit" name="co2_limit" value=1.0>
-      <label for="co2_limit">Fraction of 1990 CO2 emissions allowed [per unit]</label>
-    </p>
-    <p>
-      <input type="number" class="form-control" id="frequency" name="frequency" value=1.0>
-      <label for="frequency">Sampling frequency n-hourly for representative year, for computational reasons n>=25 [integer]</label>
-    </p>
-    <h3>Demand</h3>
-    <p>
-      <input class="form-check-input" type="number" name="electricity_demand" id="electricity_demand" value=1.0>
-      <label class="form-check-label" for="electricity_demand">
-	Demand for electrical devices in residential and services sector compared to today [per unit]
-      </label>
-    </p>
-    <p>
-      <input class="form-check-input" type="number" name="space_heat_demand" id="space_heat_demand" value=1.0>
-      <label class="form-check-label" for="space_heat_demand">
-	Demand for space heating in buildings compared to today [per unit]
-      </label>
-    </p>
-    <p>
-      <input class="form-check-input" type="number" name="water_heat_demand" id="water_heat_demand" value=1.0>
-      <label class="form-check-label" for="water_heat_demand">
-	Demand for hot water in buildings demand compared to today [per unit]
-      </label>
-    </p>
-    <p>
-      <input class="form-check-input" type="number" name="land_transport_demand" id="land_transport_demand" value=1.0>
-      <label class="form-check-label" for="land_transport_demand">
-	Demand for land transport (road and rail) compared to today [per unit]
-      </label>
-    </p>
-    <p>
-      <input class="form-check-input" type="number" name="shipping_demand" id="shipping_demand" value=1.0>
-      <label class="form-check-label" for="shipping_demand">
-	Demand for shipping compared to today [per unit]
-      </label>
-    </p>
-    <p>
-      <input class="form-check-input" type="number" name="aviation_demand" id="aviation_demand" value=1.0>
-      <label class="form-check-label" for="aviation_demand">
-	Demand for aviation compared to today [per unit]
-      </label>
-    </p>
-    <p>
-      <input class="form-check-input" type="number" name="industry_demand" id="industry_demand" value=1.0>
-      <label class="form-check-label" for="industry_demand">
-	Demand in industry compared to today [per unit]
-      </label>
+      <input type="text" class="form-control" id="scenario_name" name="scenario_name" value="no name" size="16">
     </p>
 
-    <h3>Sector coupling options</h3>
-    <p>
-      <input class="form-check-input" type="number" name="land_transport_electric_share" id="land_transport_electric_share" value=1.0>
-      <label class="form-check-label" for="land_transport_electric_share">
-	Share of battery electric vehicles in land transport [per unit]
-      </label>
-    </p>
-    <p>
-      <input class="form-check-input" type="number" name="land_transport_fuel_cell_share" id="land_transport_fuel_cell_share" value=1.0>
-      <label class="form-check-label" for="land_transport_fuel_cell_share">
-	Share of fuel cell electric vehicles in land transport [per unit]
-      </label>
-    </p>
+    <form>
+      <div class="form-group row">
+        <label class="col-sm-8 col-form-label" for="co2_limit">
+          Fraction of 1990 CO2 emissions allowed
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="co2_limit" id="co2_limit" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">per unit</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="frequency">
+          Sampling frequency (n-hourly for representative year)
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="frequency" id="frequency" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">integer >= 25</small>
+        </div>
+      </div>
+    </form>
+
+    </section>
+
+    <section id="demand">
+    <h2 data-toc-text="Demand">Demand</h2>
+    <hr>
+
+    <form>
+      <div class="form-group row">
+        <label class="col-sm-8 col-form-label" for="electricity_demand">
+          Demand for electricity in residential and services sector compared to today
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="electricity_demand" id="electricity_demand" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">per unit</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="space_heat_demand">
+          Demand for space heating in buildings compared to today
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="water_heat_demand" id="water_heat_demand" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">per unit</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="water_heat_demand">
+          Demand for hot water in buildings demand compared to today
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="space_heat_demand" id="space_heat_demand" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">per unit</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="land_transport_demand">
+          Demand for land transport (road and rail) compared to today
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="land_transport_demand" id="land_transport_demand" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">per unit</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="shipping_demand">
+          Demand for shipping compared to today
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="shipping_demand" id="shipping_demand" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">per unit</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="aviation_demand">
+          Demand for aviation compared to today
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="aviation_demand" id="aviation_demand" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">per unit</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="industry_demand">
+          Demand in industry compared to today
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="industry_demand" id="industry_demand" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">per unit</small>
+        </div>
+      </div>
+    </form>
+
+    </section>
+
+    <section id="sector-coupling">
+    <h2 data-toc-text="Sector coupling options">Sector coupling options</h2>
+    <hr>
+
+    <form>
+      <div class="form-group row">
+        <label class="col-sm-8 col-form-label" for="co2_sequestration_potential">
+          Yearly sequestration potential for carbon dioxide
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="co2_sequestration_potential" id="co2_sequestration_potential" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">MtCO2/a</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="land_transport_electric_share">
+          Share of battery electric vehicles in land transport
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="land_transport_electric_share" id="land_transport_electric_share" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">per unit</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="land_transport_fuel_cell_share">
+          Share of fuel cell electric vehicles in land transport
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="land_transport_fuel_cell_share" id="land_transport_fuel_cell_share" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">per unit</small>
+        </div>
+      </div>
+    </form>
+
+
     <p>
       <input class="form-check-input" type="checkbox" name="bev_dsm" id="bev_dsm" checked>
       <label class="form-check-label" for="bev_dsm">
@@ -106,74 +238,170 @@
 	Allow thermal energy storage
       </label>
     </p>
+
+    </section>
+
+    <section id="costs">
+    <h2 data-toc-text="Costs">Costs</h2>
+    <hr>
+
     <p>
-      <input class="form-check-input" type="number" name="co2_sequestration_potential" id="co2_sequestration_potential" value=1.0>
-      <label class="form-check-label" for="co2_sequestration_potential">
-	Yearly sequestration potential for carbon dioxide [MtCO2/a]
-      </label>
-    </p>
-    <h3>Costs</h3>
     The default costs are based on forecasts for 2050 from the Danish Energy Agency.
-    <p>
-      <input type="number" class="form-control" id="solar_cost" name="solar_cost" value=1.0>
-      <label for="solar_cost">Investment cost for utility solar PV [EUR/kW]</label>
-    </p>
-    <p>
-      <input type="number" class="form-control" id="onwind_cost" name="onwind_cost" value=1.0>
-      <label for="solar_cost">Investment cost for onshore wind [EUR/kW]</label>
-    </p>
-    <p>
-      <input type="number" class="form-control" id="offwind_cost" name="offwind_cost" value=1.0>
-      <label for="offwind_cost">Investment cost for offshore wind (before grid connection cost is added) [EUR/kW]</label>
-    </p>
-    <p>
-      <input type="number" class="form-control" id="nuclear_cost" name="nuclear_cost" value=1.0>
-      <label for="nuclear_cost">Investment cost for nuclear power (default cost from Lazard LCOE Analysis Version 13.0) [EUR/kW]</label>
-    </p>
-    <p>
-      <input type="number" class="form-control" id="electrolysis_cost" name="electrolysis_cost" value=1.0>
-      <label for="electrolysis_cost">Investment cost for hydrogen electrolysis [EUR/kW]</label>
-    </p>
-    <p>
-      <input type="number" class="form-control" id="land_transmission_cost" name="land_transmission_cost" value=1.0>
-      <label for="land_transmission_cost">Investment cost for high-voltage electricity transmission over land (around 400 for overhead lines, around 2000 for underground cables) [EUR/MW/km]</label>
-    </p>
-    <p>
-    <p>
-      <input type="number" class="form-control" id="h2_pipeline_cost" name="h2_pipeline_cost" value=1.0>
-      <label for="h2_pipeline_cost">Investment cost for new hydrogen pipelines [EUR/MW/km]</label>
-    </p>
-    <p>
-      <input class="form-check-input" type="number" name="co2_sequestration_cost" id="co2_sequestration_cost" value=1.0>
-      <label class="form-check-label" for="co2_sequestration_cost">
-	Cost of CO2 sequestration, including transport to sequestration site [EUR/tCO2]
-      </label>
-    </p>
-    <h3>Potentials</h3>
-    The default installable potentials per node (in GW) take account of land use and nature reserves.
-    <p>
-      <input type="number" class="form-control" id="solar_potential" name="solar_potential" value=1.0>
-      <label for="solar_potential">Allowed fraction of default utility solar PV installable potential [per unit]</label>
-    </p>
-    <p>
-      <input type="number" class="form-control" id="onwind_potential" name="onwind_potential" value=1.0>
-      <label for="onwind_potential">Allowed fraction of default onshore wind installable potential [per unit]</label>
-    </p>
-    <p>
-      <input type="number" class="form-control" id="offwind_potential" name="offwind_potential" value=1.0>
-      <label for="offwind_potential">Allowed fraction of default offshore wind installable potential [per unit]</label>
-    </p>
-    <h3>Electricity transmission network reinforcement constraints</h3>
-    <p>
-      <input type="number" class="form-control" id="linemax_extension" name="linemax_extension" value=1.0>
-      <label for="linemax_extension">Maximum capacity addition to a single transmission corridor [GW]</label>
-    </p>
-    <p>
-      <input type="number" class="form-control" id="line_volume" name="line_volume" value=1.0>
-      <label for="line_volume">Maximum volume of transmission grid (capacity multiplied by length of each line then summed) compared to today; must be greater than 1, e.g. 1.25 means 25% more transmission volume than today [per unit]</label>
     </p>
 
-    <h3>Submit</h3>
+    <form>
+      <div class="form-group row">
+        <label class="col-sm-8 col-form-label" for="solar_cost">
+          Investment cost for utility solar PV
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="solar_cost" id="solar_cost" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">EUR/kW</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="onwind_cost">
+          Investment cost for onshore wind
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="onwind_cost" id="onwind_cost" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">EUR/kW</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="offwind_cost">
+          Investment cost for offshore wind (before grid connection cost is added)
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="offwind_cost" id="offwind_cost" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">EUR/kW</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="nuclear_cost">
+          Investment cost for nuclear power (default cost from Lazard Version 13.0)
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="nuclear_cost" id="nuclear_cost" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">EUR/kW</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="electrolysis_cost">
+          Investment cost for hydrogen electrolysis
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="electrolysis_cost" id="electrolysis_cost" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">EUR/kW</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="land_transmission_cost">
+          Investment cost for high-voltage electricity transmission over land (around 400 for overhead lines, around 2000 for underground cables)
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="land_transmission_cost" id="land_transmission_cost" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">EUR/MW/km</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="h2_pipeline_cost">
+          Investment cost for new hydrogen pipelines
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="h2_pipeline_cost" id="h2_pipeline_cost" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">EUR/MW/km</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="co2_sequestration_cost">
+          Cost of CO2 sequestration, including transport to sequestration site
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="co2_sequestration_cost" id="co2_sequestration_cost" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">EUR/tCO2</small>
+        </div>
+      </div>
+    </form>
+    </section>
+
+    <section id="potentials">
+    <h2 data-toc-text="Potentials">Potentials</h2>
+    <hr>
+
+    <p>
+    The default installable potentials per node (in GW) take account of land use and nature reserves.
+    </p>
+
+    <form>
+      <div class="form-group row">
+        <label class="col-sm-8 col-form-label" for="solar_potential">
+          Allowed fraction of default utility solar PV installable potential
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="solar_potential" id="solar_potential" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">per unit</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="onwind_potential">
+          Allowed fraction of default onshore wind installable potential
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="onwind_potential" id="onwind_potential" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">per unit</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="offwind_potential">
+          Allowed fraction of default offshore wind installable potential
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="offwind_potential" id="offwind_potential" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">per unit</small>
+        </div>
+      </div>
+    </form>
+
+    </section> 
+
+    <section id="transmission">
+    <h2>Electricity transmission network reinforcement constraints</h2>
+    <hr>
+
+
+    <form>
+      <div class="form-group row">
+        <label class="col-sm-8 col-form-label" for="linemax_extension">
+          Maximum capacity addition to a single transmission corridor
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="linemax_extension" id="linemax_extension" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">GW</small>
+        </div>
+        <label class="col-sm-8 col-form-label" for="line_volume">
+          Maximum volume of transmission grid (capacity multiplied by length of each line then summed) compared to today; must be greater than 1, e.g. 1.25 means 25% more transmission volume than today
+        </label>
+        <div class="col-sm-2">
+          <input class="form-control" type="number" name="line_volume" id="line_volume" value=1.0>
+        </div>
+        <div classe="col-sm-2">
+          <small class="form-text text-muted">per unit</small>
+        </div>
+      </div>
+    </form>
+
+    </section>
+
+    <section id='submit'>
+    <h2 data-toc-text="Submit">Submit</h2>
+    <hr>
     <p>Warning: the model can take several minutes to finish.</p>
     <p>
       <button type="button" class="btn btn-lg btn-primary" id="solve-button">Solve</button>
@@ -182,5 +410,39 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="./static/scenarios.js"></script>
-  </body>
+    </section>
+
+</div>
+</div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script>
+<script src="{{ url_for('static', filename='jquery.easing.min.js') }}"></script>
+<script src="{{ url_for('static', filename='scrolling-nav.js') }}"></script>
+
+<script type="text/javascript">
+  // Determine which navbar to assign scrollspy depending on window width
+  if ($(window).width() >= 992) {
+    $(function() {
+      var navSelector = "#toc";
+      var $myNav = $(navSelector);
+      Toc.init($myNav);
+      $("body").scrollspy({
+        target: navSelector
+      });
+    });
+  } else {
+    $('body').scrollspy({
+      target: '#mainNav',
+      offset: 56
+    });
+  }
+</script>
+<script src="{{ url_for('static', filename='solver.js') }}"></script>
+
+</body>
 </html>
