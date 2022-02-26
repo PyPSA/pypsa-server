@@ -43,7 +43,7 @@ Start the Flask server in one terminal with:
 
 This will serve to local address:
 
-http://127.0.0.1:5002/
+<http://127.0.0.1:5002/>
 
 In the second terminal start Redis:
 
@@ -60,14 +60,6 @@ Use nginx, gunicorn for the Python server, rq, and manage with supervisor.
 
 ## License
 
-Copyright 2021-2 Tom Brown <https://nworbmot.org/>
+Copyright 2021-2 [Tom Brown](https://nworbmot.org/), [Fabian Neumann](https://www.neumann.fyi/)
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as
-published by the Free Software Foundation; either [version 3 of the
-License](LICENSE.txt), or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the [GNU
-Affero General Public License](LICENSE.txt) for more details.
+PyPSA-Server is licensed under the open source [MIT License](https://github.com/PyPSA/pypsa-server/blob/master/LICENSE.txt).
