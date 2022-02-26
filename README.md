@@ -28,10 +28,10 @@ For (optional) server deployment:
 
 ## Data requirements for installation
 
-Download and unpack the required data bundle (around 90 MB), derived from [PyPSA-Eur-Sec](https://github.com/PyPSA/pypsa-eur-sec).
+Download and unpack the required data bundle (around 100 MB), derived from [PyPSA-Eur-Sec](https://github.com/PyPSA/pypsa-eur-sec).
 
-	wget https://model.energy/scenarios/static/pypsa-server-data-bundle-210801.zip
-	unzip pypsa-server-data-bundle-210801.zip
+	wget https://model.energy/scenarios/static/pypsa-server-data-bundle-220226.zip
+	unzip pypsa-server-data-bundle-220226.zip
 
 ## Run server locally on your own computer
 
