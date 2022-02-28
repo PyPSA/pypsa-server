@@ -18,6 +18,8 @@ import os, snakemake, yaml, datetime
 from rq import get_current_job
 import pandas as pd
 
+resolution_limit = 25
+
 def solve(assumptions):
 
     print(assumptions)
@@ -71,8 +73,8 @@ def solve(assumptions):
         if forbidden in default["scenario"]["scenario_name"]:
             return {"error" : "Scenario name cannot contain commas or whitespace"}
 
-    if default["scenario"]["frequency"] < 25:
-        return {"error" : "Frequency must be 25-hourly or greater for computational reasons"}
+    if default["scenario"]["frequency"] < resolution_limit:
+        return {"error" : f"Frequency must be {resolution_limit}-hourly or greater for computational reasons"}
 
     if default["scenario"]["line_volume"] < 1.0:
         return {"error" : "Line volume limit must be greater than 1.0"}
