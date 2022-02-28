@@ -31,7 +31,8 @@ import json, os, hashlib, yaml
 
 import pandas as pd
 
-job_timeout=1200
+#in seconds
+job_timeout=60*60*20
 
 conn = Redis()
 
