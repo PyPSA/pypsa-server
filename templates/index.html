@@ -9,7 +9,7 @@
   </head>
 
   <body id="page-top">
-  
+
   <header class="bg-primary text-white">
     <div class="container text-center">
       <h1>PyPSA-Eur-Sec optimisation server</h1>
@@ -30,24 +30,24 @@
     <h2>Introduction</h2>
     <hr>
 
-    <p>This interface allows you to run custom optimisations for a sector-coupled model of the European energy system, <a href="https://github.com/PyPSA/pypsa-eur-sec">PyPSA-Eur-Sec</a>. You can, for example, explore different scenarios to reach net-zero carbon dioxide emissions across electricity, heating, transport and industry.</p>
+    <p>This interface allows you to run custom optimisations for a sector-coupled model of the European energy system, <a href="https://github.com/PyPSA/pypsa-eur-sec">PyPSA-Eur-Sec</a>. You can, for example, explore different scenarios to reach net-zero carbon dioxide emissions across electricity, heating, transport and industry. There are more details and context on the underlying model in a <a href="https://nworbmot.org/energy/brown-empe.pdf">slide deck from October 2021</a>.</p>
 
     <p>The model minimises the costs of the energy system assuming all capacity investments in generation, storage, energy conversion and energy transport can be re-optimised. Energy services (electricity, heating, transport, industrial demand) are provided at today's levels by default, but they can also be altered. Default cost assumptions are taken from forecasts for 2050, mainly from the <a href="https://ens.dk/en/our-services/projections-and-models/technology-data">Danish Energy Agency Technology Data</a>. A weighted average cost of capital of 7% is applied. 45 regions are assumed. A full year of representative weather and load data is used, but sampled n-hourly.</p>
 
     <br></br>
     <p>
       <center>
-    
-      <a href="submit">  
+
+      <a href="submit">
       <button type="button" class="btn btn-lg btn-primary" id="submit-button">Submit a new scenario</button>
       </a>
-      <a href="results">  
+      <a href="results">
       <button type="button" class="btn btn-lg btn-primary" id="results-button">See previously calculated scenarios</button>
       </a>
 
       </center>
     </p>
-    
+
     <br></br>
     <h2>Only free software and open data</h2>
     <hr>
@@ -70,14 +70,28 @@
     <br></br>
     <h2>Limitations</h2>
     <hr>
-    <p>There are many limitations to the model. Some infrastructure may not meet with societal acceptance, or may not be feasible to build given supply chain and personnel training limitations. On the modelling side, in this simplified model there are not enough model regions to simulate the energy networks properly, nor enough spatial and temporal resolution to see the full variability of wind, solar and demand. Ideally decades of weather data would be used to sample historical weather patterns, as well as data that takes into account future climate change.</p>
-    
+    <p>There are many limitations to the model. Only a selection are given here:
+
+      <ul>
+	<li>The model may build infrastructure that does not meet with societal acceptance.</li>
+	<li>Infrastructure may not be feasible to build given supply chain and personnel training limitations, which are not included in the model. For example, the implementation of efficiency measures in buildings requires a large, trained workforce.</li>
+	<li>The model assumes energy independence in clean energy, and does not consider the import of clean hydrogen, ammonia, steel or hydrocarbons from outside Europe. Imports of green fuels from renewables-rich regions could reduce costs and, for example, the need for extensive hydrogen networks.</li>
+	<li>The model meets petrochemical feedstock with naphtha only and does not consider other pathways such as methanol-to-olefin processes.</li>
+	<li>There are a number of assumptions about recycling and process switching taken over from the main <a href="https://github.com/PyPSA/pypsa-eur-sec">PyPSA-Eur-Sec model</a>.</li>
+	<li>In this simplified 45-node model there are not enough model regions to simulate the energy networks properly.</li>
+	<li>There is not enough spatial and temporal resolution to see the full variability of wind, solar and demand.</li>
+	<li>Down-sampling to 25-hourly time series means not all extreme events of high residual load are seen, and the benefits of short-term hourly flexiblity (like stationary batteries and demand-side management in battery electric vehicles) are ignored. Some 3-hourly results are <a href='results'>available</a> for comparison.</li>
+	<li>Ideally decades of weather data would be used to sample historical weather patterns, as well as data that takes into account future climate change.</li>
+	<li>The pathway of asset investment from today until a low-carbon future should be optimised to see what needs to be done and when, and to minimise stranded assets. Pathway analysis with this model can be found in <a href="https://arxiv.org/abs/2109.09563">Victoria et al, 2021</a>.</li>
+      </ul>
+
     <br></br>
     <h2>Contributors and thanks</h2>
     <hr>
     <p><a href="https://nworbmot.org/">Tom Brown</a> conceived and developed the website.</p>
+    <p><a href="https://neumann.fyi/">Fabian Neumann</a> updated the GUI to a modern design.</p>
     <p>We thank all the developers of the other free software on which this website depends.</p>
-    
+
     <br></br>
     <h2>Privacy statement</h2>
     <hr>

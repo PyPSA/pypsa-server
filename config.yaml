@@ -197,6 +197,7 @@ solving:
     name: highs
     #parallel: on
     #run_crossover: False
+
     #name: gurobi
     #threads: 4
     #method: 2 # barrier
