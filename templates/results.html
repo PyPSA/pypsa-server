@@ -9,18 +9,19 @@
   </head>
 
   <body id="page-top">
-  
+
     <header class="bg-primary text-white">
       <div class="container text-center">
         <h1>Previously calculated scenarios</h1>
       </div>
     </header>
-  
+
     <div class="container-fluid">
 
     <br></br>
     <table>
       <tr>
+	<th>select</th>
 	<th>date and time submitted</th>
 	<th>name</th>
 	<th>id &amp; link</th>
@@ -30,6 +31,7 @@
       </tr>
       {% for scenario in scenarios.values() %}
       <tr>
+	<td class="select_scenario"><input class="form-check-input" type="checkbox" name="{{ scenario["jobid"] }}"></td>
 	<td>{{ scenario["datetime"][:19] }}</td>
 	<td>{{ scenario["scenario_name"] }}</td>
 	<td><a href="results/{{ scenario["jobid"] }}">{{ scenario["jobid"] }}</a></td>
@@ -41,5 +43,21 @@
     </table>
 
   </div>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script type="text/javascript">
+
+  var selected = [];
+
+  d3.selectAll(".form-check-input").on("change",function(){
+      if(selected.includes(this.name)){
+	  selected.splice(selected.indexOf(this.name),1);
+	  console.log(this.name,"removed from selection");
+      } else {
+	  selected.push(this.name);
+	  console.log(this.name,"added to selection");
+      };
+      console.log(selected);
+  });
+</script>
   </body>
 </html>

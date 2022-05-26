@@ -196,3 +196,7 @@ input[type=text]{
 th, td {
     padding-right: 15px;
 }
+
+td.select_scenario {
+    text-align: center;
+}
