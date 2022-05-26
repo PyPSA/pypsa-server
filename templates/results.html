@@ -17,7 +17,16 @@
     </header>
 
     <div class="container-fluid">
+    <div class="col-md-12 col-lg-9">
 
+      <p>You can either look at individual scenarios by using the links below, or select multiple scenarios to compare:</p>
+
+      <p>
+      <button type="button" class="btn btn-lg btn-primary" id="compare-button">compare</button>
+      <span id="status"></span>
+    </p>
+
+    </div>
     <br></br>
     <table>
       <tr>
@@ -58,6 +67,23 @@
       };
       console.log(selected);
   });
+
+  var compareButton = d3.select("#compare-button");
+
+  function compare() {
+      console.log("comparing",selected);
+      if(selected.length < 2){
+	  document.getElementById("status").innerHTML="error, you need to select at least two scenarios to compare";
+      } else if (selected.length > 10){
+	  document.getElementById("status").innerHTML="error, you cannot select more than ten scenarios to compare";
+      } else {
+	  window.location.href = "./results/" + selected.join(",");
+      };
+  };
+
+  compareButton.on("click", compare);
+
+
 </script>
   </body>
 </html>

@@ -134,8 +134,8 @@ def results():
     return render_template('results.html',
                            scenarios=scenarios.T.to_dict())
 
-@app.route('/results/<jobid>')
-def resultsid(jobid):
+
+def single_job(jobid):
 
     if not os.path.isdir(f"static/results/{jobid}"):
         abort(404)
@@ -161,6 +161,19 @@ def resultsid(jobid):
                            diff=diff,
                            summary=summary.to_dict())
 
+def compare_jobs(jobids):
+    print(jobids)
+    return render_template('compare.html',
+                           jobids=jobids)
+
+
+@app.route('/results/<jobid>')
+def resultsid(jobid):
+
+    if "," in jobid:
+        return compare_jobs(jobid.split(","))
+    else:
+        return single_job(jobid)
 
 @app.route('/jobs', methods=['GET','POST'])
 def jobs():
