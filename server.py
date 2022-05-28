@@ -27,9 +27,19 @@ from rq import Queue
 
 import time, datetime
 
-import json, os, hashlib, yaml
+import json, os, hashlib, yaml, sys
 
 import pandas as pd
+
+
+sys.path.append("scripts")
+
+from plot_summary import rename_techs, preferred_order
+
+
+with open(f"config.yaml",'r') as f:
+    config = yaml.safe_load(f)
+
 
 #in seconds
 job_timeout=60*60*20
@@ -162,9 +172,55 @@ def single_job(jobid):
                            summary=summary.to_dict())
 
 def compare_jobs(jobids):
+
     print(jobids)
+
+    costs_df = pd.DataFrame()
+
+    for jobid in jobids:
+        if not os.path.isdir(f"static/results/{jobid}"):
+            abort(404)
+
+        costs_df[jobid] = pd.read_csv(f"static/results/{jobid}/csvs/costs.csv",
+                                      index_col=list(range(3)),
+                                      squeeze=True)
+
+    costs_df = costs_df.groupby(costs_df.index.get_level_values(2)).sum()
+    costs_df = costs_df.groupby(costs_df.index.map(rename_techs)).sum()/1e9
+    new_index = preferred_order.intersection(costs_df.index).append(costs_df.index.difference(preferred_order))
+    costs_df = costs_df.loc[new_index]
+
+    costs_df["color"] = [config['plotting']['tech_colors'][i] for i in new_index]
+
+    costs_df["color"].replace({"k" : "#000000",
+                               "r": "#FF0000",
+                               "b": "#0000FF",
+                               "c" : "#00FFFF",
+                               "y" : "#FFFF00",
+                               "pink" : "#FFC0CB",
+                               "wheat" : "#f5deb3",
+                               "orange" : "#FFA500",
+                               "brown" : "#964B00",
+                               "slategray" : "#708090",
+                               "grey" : "#808080"},
+                              inplace=True)
+
+    costs = {}
+
+    costs["data"] = [costs_df[jobid].tolist() for jobid in jobids]
+
+    costs["color"] = costs_df.color.tolist()
+    costs["techs"] = costs_df.index.tolist()
+
+
+    scenarios = pd.read_csv("static/scenarios.csv",
+                            names=["scenario_name","datetime","co2_shadow","total_costs","diff","hashid"],
+                            index_col=0).fillna("")
+
     return render_template('compare.html',
-                           jobids=jobids)
+                           scenarios=jobids,
+                           scenario_data=scenarios.loc[jobids].T.to_dict(),
+                           costs=costs)
 
 
 @app.route('/results/<jobid>')

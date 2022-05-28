@@ -18,16 +18,44 @@
 
     <div class="container-fluid">
       <br></br>
-      <table>
+    <h3>Summary results</h3>
+    <table>
       <tr>
-	<th>jobid</th>
+	<th>date and time submitted</th>
+	<th>name</th>
+	<th>id &amp; link</th>
+	<th>system costs [bnEUR/a]</th>
+	<th>marginal abatement cost [EUR/tCO2]</th>
+	<th>difference to default</th>
       </tr>
-      {% for jobid in jobids %}
+      {% for scenario in scenarios %}
       <tr>
-	<td>{{ jobid }}</td>
+	<td>{{ scenario_data[scenario]["datetime"][:19] }}</td>
+	<td>{{ scenario_data[scenario]["scenario_name"] }}</td>
+	<td>{{ scenario }}</td>
+	<td>{{ (scenario_data[scenario]["total_costs"]/1e9)|round(2) }}</td>
+	<td>{{ scenario_data[scenario]["co2_shadow"]|round(2) }}</td>
+	<td>{{ scenario_data[scenario]["diff"] }}</td>
       </tr>
       {% endfor %}
     </table>
-  </div>
+    </div>
+
+      <br></br>
+    <h3>Breakdown of yearly system costs</h3>
+
+    <div id="costs_div">
+      <svg width="1000" height="400" id="costs_graph"></svg>
+    </div>
+
+<script type="text/javascript">
+
+  costs = {{costs | tojson}};
+  scenario_data = {{scenario_data | tojson}};
+  scenarios = {{scenarios | tojson}};
+</script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="{{ url_for('static', filename='d3-tip.js') }}"></script>
+<script src="{{ url_for('static', filename='compare.js') }}"></script>
   </body>
 </html>
