@@ -55,23 +55,13 @@
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script type="text/javascript">
 
-  var selected = [];
-
-  d3.selectAll(".form-check-input").on("change",function(){
-      if(selected.includes(this.name)){
-	  selected.splice(selected.indexOf(this.name),1);
-	  console.log(this.name,"removed from selection");
-      } else {
-	  selected.push(this.name);
-	  console.log(this.name,"added to selection");
-      };
-      console.log(selected);
-  });
-
   var compareButton = d3.select("#compare-button");
 
   function compare() {
+
+      selected = d3.selectAll('.form-check-input:checked').nodes().map(a => a.name);
       console.log("comparing",selected);
+
       if(selected.length < 2){
 	  document.getElementById("status").innerHTML="error, you need to select at least two scenarios to compare";
       } else if (selected.length > 10){
