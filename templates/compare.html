@@ -33,7 +33,7 @@
       <tr>
 	<td>{{ scenario_data[scenario]["datetime"][:19] }}</td>
 	<td>{{ scenario_data[scenario]["scenario_name"] }}</td>
-	<td>{{ scenario }}</td>
+	<td><a href="{{ scenario }}">{{ scenario }}</a></td>
 	<td>{{ (scenario_data[scenario]["total_costs"]/1e9)|round(2) }}</td>
 	<td>{{ scenario_data[scenario]["co2_shadow"]|round(2) }}</td>
 	<td>{{ scenario_data[scenario]["diff"] }}</td>
