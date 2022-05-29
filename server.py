@@ -290,11 +290,7 @@ def compare_jobs(jobids):
 
 @app.route('/results/<jobid>')
 def resultsid(jobid):
-
-    if "," in jobid:
-        return compare_jobs(jobid.split(","))
-    else:
-        return single_job(jobid)
+    return compare_jobs(jobid.split(","))
 
 @app.route('/jobs', methods=['GET','POST'])
 def jobs():
