@@ -192,19 +192,6 @@ def compare_jobs(jobids):
 
     costs_df["color"] = [config['plotting']['tech_colors'][i] for i in new_index]
 
-    costs_df["color"].replace({"k" : "#000000",
-                               "r": "#FF0000",
-                               "b": "#0000FF",
-                               "c" : "#00FFFF",
-                               "y" : "#FFFF00",
-                               "pink" : "#FFC0CB",
-                               "wheat" : "#f5deb3",
-                               "orange" : "#FFA500",
-                               "brown" : "#964B00",
-                               "slategray" : "#708090",
-                               "grey" : "#808080"},
-                              inplace=True)
-
     costs = {}
 
     costs["data"] = [costs_df[jobid].tolist() for jobid in jobids]
