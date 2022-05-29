@@ -41,16 +41,23 @@
       </tr>
       {% endfor %}
     </table>
-
       <br></br>
-    <h3>Breakdown of yearly system costs</h3>
+    <h3>Table of contents</h3>
+      <ul>
+	<li><a href="#costs">Breakdown of yearly system costs</a></li>
+	<li><a href="#maps">Maps</a></li>
+	<li><a href="#capacities">Technology capacities</a></li>
+	<li><a href="#balances">Energy balances by carrier</a></li>
+      </ul>
+      <br></br>
+    <h3 id="costs">Breakdown of yearly system costs</h3>
 
     <div id="costs_div">
       <svg width="1000" height="400" id="costs_graph"></svg>
       <svg width="220" height="400" id="costs_graph_legend"></svg>
     </div>
 
-    <h3>Maps</h3>
+    <h3 id="maps">Maps</h3>
 
     <p>starting grid | grid reinforcement and other investments | hydrogen network and electrolyser capacity</p>
 
@@ -64,14 +71,14 @@
     </p>
     {% endfor %}
 
-    <h3>Technology capacities</h3>
+    <h3 id="capacities">Technology capacities</h3>
 
     <div id="capacities_div">
       <svg width="1000" height="400" id="capacities_graph"></svg>
       <svg width="220" height="400" id="capacities_graph_legend"></svg>
     </div>
 
-    <h3>Energy balances</h3>
+    <h3 id="balances">Energy balances by carrier</h3>
 
     <div id="balances_div">
       {% for balance in balances_selection %}
