@@ -260,8 +260,6 @@ def resultsid(jobid):
 
     # primary energy
 
-    print(balances_df)
-
     primary = balances_df[(balances_df.index.get_level_values(1).isin(["generators", "storage_units","stores"])& ~balances_df.index.get_level_values(2).isin(["co2 stored","co2"])) ^ balances_df.index.get_level_values(2).str.contains("heat pump") ]
 
     #this sum subtracts electricity input from heat output for heat pumps
@@ -287,6 +285,38 @@ def resultsid(jobid):
     primaries["color"] = [config['plotting']['tech_colors'][i] for i in primary.index]
 
 
+    # final energy
+
+    final_dict = {"electricity": ['BEV charger0', 'V2G1',
+                                  'home battery charger0',
+                                  'home battery discharger1', 'residential rural ground heat pump0',
+                                  'residential rural resistive heater0',
+                                  'residential urban decentral air heat pump0',
+                                  'residential urban decentral resistive heater0',
+                                  'services rural ground heat pump0', 'services rural resistive heater0',
+                                  'services urban decentral air heat pump0',
+                                  'services urban decentral resistive heater0',
+                                  'electricity', 'industry electricity'],
+                  "methane" : ['gas for industry CC0', 'gas for industry0',
+                               'residential rural gas boiler0',
+                               'residential urban decentral gas boiler0', 'services rural gas boiler0',
+                               'services urban decentral gas boiler0'],
+                  "hydrogen" : ['H2 for industry', 'H2 for shipping',
+                                'land transport fuel cell'],
+                  "liquid hydrocarbons" : ['kerosene for aviation',
+                                           'naphtha for industry'],
+                  "district heat" : ['low-temperature heat for industry', 'urban central heat']}
+
+    final_df = pd.DataFrame(columns=jobids)
+
+    for carrier in ["electricity","methane","hydrogen","liquid hydrocarbons","district heat"]:
+        final_df.loc[carrier] = -balances_df[balances_df.index.get_level_values(2).isin(final_dict[carrier])].sum()/1e6
+
+    finals = {}
+    finals["data"] = [final_df[jobid].tolist() for jobid in jobids]
+    finals["techs"] = final_df.index.tolist()
+    finals["color"] = [config['plotting']['tech_colors'][i] for i in final_df.index]
+
     scenarios = pd.read_csv("static/scenarios.csv",
                             names=["scenario_name","datetime","co2_shadow","total_costs","diff","hashid"],
                             index_col=0).fillna("")
@@ -298,7 +328,8 @@ def resultsid(jobid):
                            capacities=capacities,
                            balances=balances,
                            balances_selection=balances_selection,
-                           primaries=primaries)
+                           primaries=primaries,
+                           finals=finals)
 
 
 @app.route('/jobs', methods=['GET','POST'])

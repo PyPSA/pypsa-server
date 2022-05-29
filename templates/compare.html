@@ -49,6 +49,7 @@
 	<li><a href="#capacities">Technology capacities</a></li>
 	<li><a href="#balances">Energy balances by carrier</a></li>
 	<li><a href="#primaries">Primary energy</a></li>
+	<li><a href="#finals">Final energy and non-energy</a></li>
       </ul>
       <br></br>
     <h3 id="costs">Breakdown of yearly system costs</h3>
@@ -91,10 +92,32 @@
 
     <h3 id="primaries">Primary energy</h3>
 
+    <p>Note that primary energy for wind, solar and hydroelectricity
+    is accounted for using the direct equivalence method,
+    i.e. assuming a 100% correspondence between primary energy and
+    electricity generation.</p>
+
     <div id="primaries_div">
       <svg width="1000" height="400" id="primaries_graph"></svg>
       <svg width="220" height="400" id="primaries_graph_legend"></svg>
     </div>
+
+    <h3 id="finals">Final energy and non-energy</h3>
+
+     <p>Electricity includes electricity demand from electric
+     vehicles, newly-electrified industry and heat pumps in individual
+     buildings, but excludes electricity demand for water
+     electrolysis. Hydrogen includes hydrogen demand for land
+     transport, shipping, industry and ammonia production, but
+     excludes hydrogen demand for synthesis into hydrocarbons. Liquid
+     hydrocarbons include aviation fuel and feedstock for basic
+     chemicals production (mostly for plastics).</p>
+
+    <div id="finals_div">
+      <svg width="1000" height="400" id="finals_graph"></svg>
+      <svg width="220" height="400" id="finals_graph_legend"></svg>
+    </div>
+
     </div>
 
 <script type="text/javascript">
@@ -104,6 +127,7 @@
   balances = {{balances | tojson}};
   balances_selection = {{balances_selection | tojson}};
   primaries = {{primaries | tojson}};
+  finals = {{finals | tojson}};
   scenario_data = {{scenario_data | tojson}};
   scenarios = {{scenarios | tojson}};
 </script>

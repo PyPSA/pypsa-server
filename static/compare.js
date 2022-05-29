@@ -285,6 +285,8 @@ draw_stack(capacities["data"], capacities["techs"], capacities["color"], "capaci
 
 draw_stack(primaries["data"], primaries["techs"], primaries["color"], "primary energy [TWh/a]", "#primaries_graph", " TWh/a");
 
+draw_stack(finals["data"], finals["techs"], finals["color"], "final energy [TWh/a]", "#finals_graph", " TWh/a");
+
 
 let balances_div = document.getElementById("balances_div");
 
