@@ -61,12 +61,22 @@
     <img src="../static/results/{{scenario}}/maps/elec_s_45_lvopt__none-costs-all_2050.png" alt="tomorrow's grid">
     <img src="../static/results/{{scenario}}/maps/elec_s_45_lvopt__none-h2_network_2050.png" alt="hydrogen grid">
     </p>
-          {% endfor %}
+    {% endfor %}
 
     <h3>Technology capacities</h3>
 
     <div id="capacities_div">
       <svg width="1000" height="400" id="capacities_graph"></svg>
+    </div>
+
+    <h3>Energy balances</h3>
+
+    <div id="balances_div">
+      {% for balance in balances_selection %}
+      <h4>{{balances[balance]["name"]}} supply and demand</h4>
+      <svg width="1000" height="400" id="{{balance}}_graph"></svg>
+    {% endfor %}
+
     </div>
     </div>
 
@@ -74,6 +84,8 @@
 
   costs = {{costs | tojson}};
   capacities = {{capacities | tojson}};
+  balances = {{balances | tojson}};
+  balances_selection = {{balances_selection | tojson}};
   scenario_data = {{scenario_data | tojson}};
   scenarios = {{scenarios | tojson}};
 </script>

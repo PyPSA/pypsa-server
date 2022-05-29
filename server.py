@@ -177,6 +177,7 @@ def compare_jobs(jobids):
 
     costs_df = pd.DataFrame()
     capacities_df = pd.DataFrame()
+    balances_df = pd.DataFrame()
 
     for jobid in jobids:
         if not os.path.isdir(f"static/results/{jobid}"):
@@ -188,6 +189,10 @@ def compare_jobs(jobids):
         capacities_df[jobid] = pd.read_csv(f"static/results/{jobid}/csvs/capacities.csv",
                                       index_col=list(range(2)),
                                       squeeze=True)
+        balances_df[jobid] = pd.read_csv(f"static/results/{jobid}/csvs/supply_energy.csv",
+                                      index_col=list(range(3)),
+                                      squeeze=True)
+
     costs_df = costs_df.groupby(costs_df.index.get_level_values(2)).sum()
     costs_df = costs_df.groupby(costs_df.index.map(rename_techs)).sum()/1e9
     new_index = preferred_order.intersection(costs_df.index).append(costs_df.index.difference(preferred_order))
@@ -209,6 +214,63 @@ def compare_jobs(jobids):
     capacities["techs"] = capacities_df.index.tolist()
     capacities["color"] = [config['plotting']['tech_colors'][i] for i in capacities_df.index]
 
+
+
+    co2_carriers = ["co2","co2 stored","process emissions"]
+    balance_selections = {i.replace(" ","_") : [i] for i in balances_df.index.levels[0]}
+    balance_selections["energy"] = balances_df.index.levels[0].symmetric_difference(co2_carriers)
+
+    balances_selection = ["AC", "low_voltage", "H2", "gas", "oil", "co2", "co2_stored", "residential_rural_heat", "urban_central_heat"]
+
+    balances_names = {"AC" : "high voltage electricity",
+		      "low_voltage" : "low voltage electricity",
+		      "H2" : "hydrogen",
+		      "gas" : "methane",
+		      "oil" : "liquid hydrocarbon",
+		      "co2" : "CO2",
+		      "co2_stored" : "stored CO2",
+		      "residential_rural_heat" : "residential rural building heating",
+		      "urban_central_heat" : "urban district heating"}
+
+    balances = {}
+    for k in balances_selection:
+
+        balances[k] = {}
+        balances[k]["name"] = balances_names[k]
+        if balance_selections[k][0] in co2_carriers:
+            balances[k]["label"] = "CO2"
+            balances[k]["units"] = "MtCO2/a"
+        else:
+            balances[k]["label"] = "energy"
+            balances[k]["units"] = "TWh/a"
+
+        df = balances_df.loc[balance_selections[k]]
+        df = df.groupby(df.index.get_level_values(2)).sum()/1e6
+        df.index = [i[:-1] if ((i != "co2") and (i[-1:] in ["0","1","2","3"])) else i for i in df.index]
+        df = df.groupby(df.index.map(rename_techs)).sum()
+
+        new_index = preferred_order.intersection(df.index).append(df.index.difference(preferred_order))
+        df = df.loc[new_index]
+        to_drop = df.index[df.abs().max(axis=1) < config['plotting']['energy_threshold']/10]
+        print("dropping")
+        print(df.loc[to_drop])
+        df = df.drop(to_drop)
+
+        positive_index = df.index[df.sum(axis=1) > 0]
+        negative_index = df.index[df.sum(axis=1) < 0]
+
+        balances[k]["positive"] = {}
+        balances[k]["negative"] = {}
+
+        balances[k]["positive"]["data"] = [df.loc[positive_index,jobid].tolist() for jobid in jobids]
+        balances[k]["positive"]["techs"] = positive_index.tolist()
+        balances[k]["positive"]["color"] = [config['plotting']['tech_colors'][i] for i in positive_index]
+
+        balances[k]["negative"]["data"] = [df.loc[negative_index,jobid].tolist() for jobid in jobids]
+        balances[k]["negative"]["techs"] = negative_index.tolist()
+        balances[k]["negative"]["color"] = [config['plotting']['tech_colors'][i] for i in negative_index]
+
+
     scenarios = pd.read_csv("static/scenarios.csv",
                             names=["scenario_name","datetime","co2_shadow","total_costs","diff","hashid"],
                             index_col=0).fillna("")
@@ -217,7 +279,9 @@ def compare_jobs(jobids):
                            scenarios=jobids,
                            scenario_data=scenarios.loc[jobids].T.to_dict(),
                            costs=costs,
-                           capacities=capacities)
+                           capacities=capacities,
+                           balances=balances,
+                           balances_selection=balances_selection)
 
 
 @app.route('/results/<jobid>')
