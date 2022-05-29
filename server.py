@@ -145,33 +145,11 @@ def results():
                            scenarios=scenarios.T.to_dict())
 
 
-def single_job(jobid):
 
-    if not os.path.isdir(f"static/results/{jobid}"):
-        abort(404)
+@app.route('/results/<jobid>')
+def resultsid(jobid):
 
-    summary = pd.read_csv(f"static/results/{jobid}/csvs/metrics.csv",
-                          names=["item","value"],
-                          index_col=0,
-                          squeeze=True)
-
-    print(summary)
-
-    print(summary.to_dict())
-
-    with open(f"static/results/{jobid}/config.yaml",'r') as f:
-        options = yaml.safe_load(f)
-
-    with open(f"static/results/{jobid}/diff.yaml",'r') as f:
-        diff = yaml.safe_load(f)
-
-    return render_template('result.html',
-                           jobid=jobid,
-                           options=options,
-                           diff=diff,
-                           summary=summary.to_dict())
-
-def compare_jobs(jobids):
+    jobids = jobid.split(",")
 
     print(jobids)
 
@@ -287,10 +265,6 @@ def compare_jobs(jobids):
                            balances=balances,
                            balances_selection=balances_selection)
 
-
-@app.route('/results/<jobid>')
-def resultsid(jobid):
-    return compare_jobs(jobid.split(","))
 
 @app.route('/jobs', methods=['GET','POST'])
 def jobs():

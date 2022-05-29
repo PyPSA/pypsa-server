@@ -289,6 +289,5 @@ let balances_div = document.getElementById("balances_div");
 for (k=0; k < balances_selection.length; k++){
     balance = balances_selection[k];
     balance_name = balances[balance]["name"];
-    console.log(balance,balance_name);
     draw_balance_stack(balance,balances[balance]);
 };

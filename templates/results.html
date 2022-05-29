@@ -60,7 +60,9 @@
       selected = d3.selectAll('.form-check-input:checked').nodes().map(a => a.name);
       console.log("comparing",selected);
 
-      if (selected.length > 10){
+      if(selected.length < 1){
+	  document.getElementById("status").innerHTML="error, you need to select at least one scenario";
+      } else if (selected.length > 10){
 	  document.getElementById("status").innerHTML="error, you cannot select more than ten scenarios to compare";
       } else {
 	  window.location.href = "./results/" + selected.join(",");
