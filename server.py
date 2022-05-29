@@ -195,6 +195,10 @@ def compare_jobs(jobids):
 
     costs_df = costs_df.groupby(costs_df.index.get_level_values(2)).sum()
     costs_df = costs_df.groupby(costs_df.index.map(rename_techs)).sum()/1e9
+    to_drop = costs_df.index[costs_df.max(axis=1) < config['plotting']['costs_threshold']]
+    print("dropping")
+    print(costs_df.loc[to_drop])
+    costs_df = costs_df.drop(to_drop)
     new_index = preferred_order.intersection(costs_df.index).append(costs_df.index.difference(preferred_order))
     costs_df = costs_df.loc[new_index]
 

@@ -97,6 +97,28 @@ function draw_stack(data, labels, color, ylabel, svgName, suffix){
         .attr("transform", "translate(" + margin.left + "," + (height + margin.top) + ")")
         .call(xAxisGenerator);
 
+
+
+    //Legend
+    let legendSVG = d3.select(svgName + "_legend");
+
+    let legend = legendSVG.selectAll("g")
+	.data(labels)
+	.enter()
+	.append("g")
+	.attr("transform", function (d, i) {  return "translate(0," + (5 + i * 15) + ")" });
+
+    legend.append("rect")
+	.attr("x",0)
+	.attr("y",0)
+	.attr("width", 10)
+	.attr("height", 10)
+	.style("fill", function (d, i) { return color[color.length - i - 1] });
+
+    legend.append("text")
+	.attr("x",20)
+	.attr("y",10)
+	.text(function (d, i) { return labels[labels.length - i - 1]});
 };
 
 
@@ -229,6 +251,31 @@ function draw_balance_stack(balance, balances){
         .attr("transform", "translate(" + margin.left + "," + (height + margin.top) + ")")
         .call(xAxisGenerator);
 
+    //Legend
+
+    //slice to make copy
+    let labels = balances["positive"]["techs"].slice().reverse().concat(balances["negative"]["techs"]);
+    let color = balances["positive"]["color"].slice().reverse().concat(balances["negative"]["color"]);
+
+    let legendSVG = d3.select(svgName + "_legend");
+
+    let legend = legendSVG.selectAll("g")
+	.data(labels)
+	.enter()
+	.append("g")
+	.attr("transform", function (d, i) {  return "translate(0," + (5 + i * 15) + ")" });
+
+    legend.append("rect")
+	.attr("x",0)
+	.attr("y",0)
+	.attr("width", 10)
+	.attr("height", 10)
+	.style("fill", function (d, i) { return color[i] });
+
+    legend.append("text")
+	.attr("x",20)
+	.attr("y",10)
+	.text(function (d, i) { return d});
 };
 
 

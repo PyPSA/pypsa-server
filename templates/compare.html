@@ -47,6 +47,7 @@
 
     <div id="costs_div">
       <svg width="1000" height="400" id="costs_graph"></svg>
+      <svg width="220" height="400" id="costs_graph_legend"></svg>
     </div>
 
     <h3>Maps</h3>
@@ -67,6 +68,7 @@
 
     <div id="capacities_div">
       <svg width="1000" height="400" id="capacities_graph"></svg>
+      <svg width="220" height="400" id="capacities_graph_legend"></svg>
     </div>
 
     <h3>Energy balances</h3>
@@ -75,6 +77,7 @@
       {% for balance in balances_selection %}
       <h4>{{balances[balance]["name"]}} supply and demand</h4>
       <svg width="1000" height="400" id="{{balance}}_graph"></svg>
+      <svg width="220" height="400" id="{{balance}}_graph_legend"></svg>
     {% endfor %}
 
     </div>
