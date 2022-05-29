@@ -20,7 +20,7 @@ function draw_stack(data, labels, color, ylabel, svgName, suffix){
     };
 
     let svgGraph = d3.select(svgName),
-	margin = {top: 20, right: 20, bottom: 30, left: 50},
+	margin = {top: 20, right: 20, bottom: 30, left: 65},
 	width = svgGraph.attr("width") - margin.left - margin.right,
 	height = svgGraph.attr("height") - margin.top - margin.bottom;
 
@@ -144,7 +144,7 @@ function draw_balance_stack(balance, balances){
     };
 
     let svgGraph = d3.select(svgName),
-	margin = {top: 20, right: 20, bottom: 30, left: 50},
+	margin = {top: 20, right: 20, bottom: 30, left: 65},
 	width = svgGraph.attr("width") - margin.left - margin.right,
 	height = svgGraph.attr("height") - margin.top - margin.bottom;
 
