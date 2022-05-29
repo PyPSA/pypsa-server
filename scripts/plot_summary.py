@@ -59,7 +59,7 @@ def rename_techs(label):
     return label
 
 
-preferred_order = pd.Index(["transmission lines","electricity distribution grid","hydroelectricity","hydro reservoir","run of river","pumped hydro storage","solid biomass","biogas","oil","fossil oil","nuclear","uranium","onshore wind","offshore wind","offshore wind (AC)","offshore wind (DC)","solar PV utility","solar PV rooftop","solar thermal","solar","building retrofitting","ground heat pump","air heat pump","heat pump","resistive heater","power-to-heat","gas-to-power/heat","biomass CHP","gas CHP","CHP","OCGT","gas boiler","gas","fossil gas","natural gas","helmeth","methanation","hydrogen storage","H2 Electrolysis","H2 Fuel Cell","H2 pipeline","power-to-gas","power-to-liquid","battery storage","hot water storage","CO2 sequestration"])
+preferred_order = pd.Index(["transmission lines","electricity distribution grid","hydroelectricity","hydro reservoir","run of river","pumped hydro storage","solid biomass","biogas","oil","fossil oil","nuclear","uranium","nuclear heat","onshore wind","offshore wind","offshore wind (AC)","offshore wind (DC)","solar PV utility","solar PV rooftop","solar thermal","solar","building retrofitting","ground heat pump","ambient ground heat","air heat pump","ambient air heat","heat pump","resistive heater","power-to-heat","gas-to-power/heat","biomass CHP","gas CHP","CHP","OCGT","gas boiler","gas","fossil gas","natural gas","helmeth","methanation","hydrogen storage","H2 Electrolysis","H2 Fuel Cell","H2 pipeline","power-to-gas","power-to-liquid","battery storage","hot water storage","CO2 sequestration"])
 
 def plot_costs():
 

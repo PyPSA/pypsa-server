@@ -171,6 +171,8 @@ def resultsid(jobid):
                                       index_col=list(range(3)),
                                       squeeze=True)
 
+    # costs
+
     costs_df = costs_df.groupby(costs_df.index.get_level_values(2)).sum()
     costs_df = costs_df.groupby(costs_df.index.map(rename_techs)).sum()/1e9
     to_drop = costs_df.index[costs_df.max(axis=1) < config['plotting']['costs_threshold']]
@@ -186,6 +188,8 @@ def resultsid(jobid):
     costs["color"] = [config['plotting']['tech_colors'][i] for i in costs_df.index]
 
 
+    # capacities
+
     capacities_df = capacities_df.groupby(level=1).sum()/1e3
     capacities_df = capacities_df.groupby(capacities_df.index.map(rename_techs)).sum()
     selection = ["gas CHP","biomass CHP","H2 Fuel Cell","OCGT","nuclear","solar PV rooftop","solar PV utility","offshore wind (DC)","offshore wind (AC)","onshore wind","hydroelectricity","Fischer-Tropsch","H2 Electrolysis","resistive heater","air heat pump","ground heat pump"]
@@ -197,6 +201,7 @@ def resultsid(jobid):
     capacities["color"] = [config['plotting']['tech_colors'][i] for i in capacities_df.index]
 
 
+    # balances
 
     co2_carriers = ["co2","co2 stored","process emissions"]
     balance_selections = {i.replace(" ","_") : [i] for i in balances_df.index.levels[0]}
@@ -253,6 +258,35 @@ def resultsid(jobid):
         balances[k]["negative"]["color"] = [config['plotting']['tech_colors'][i] for i in negative_index]
 
 
+    # primary energy
+
+    print(balances_df)
+
+    primary = balances_df[(balances_df.index.get_level_values(1).isin(["generators", "storage_units","stores"])& ~balances_df.index.get_level_values(2).isin(["co2 stored","co2"])) ^ balances_df.index.get_level_values(2).str.contains("heat pump") ]
+
+    #this sum subtracts electricity input from heat output for heat pumps
+    primary = primary.groupby(primary.index.get_level_values(2)).sum()
+    primary = primary.groupby(primary.index.map(rename_techs)).sum()/1e6
+
+    primary.rename({"uranium" : "nuclear heat",
+                    "air heat pump" : "ambient air heat",
+                    "ground heat pump" : "ambient ground heat"},
+                   inplace=True)
+
+    new_index = preferred_order.intersection(primary.index).append(primary.index.difference(preferred_order))
+    primary = primary.loc[new_index]
+
+    to_drop = primary.index[primary.abs().max(axis=1) < 5]
+    print("dropping")
+    print(primary.loc[to_drop])
+    primary = primary.drop(to_drop)
+
+    primaries = {}
+    primaries["data"] = [primary[jobid].tolist() for jobid in jobids]
+    primaries["techs"] = primary.index.tolist()
+    primaries["color"] = [config['plotting']['tech_colors'][i] for i in primary.index]
+
+
     scenarios = pd.read_csv("static/scenarios.csv",
                             names=["scenario_name","datetime","co2_shadow","total_costs","diff","hashid"],
                             index_col=0).fillna("")
@@ -263,7 +297,8 @@ def resultsid(jobid):
                            costs=costs,
                            capacities=capacities,
                            balances=balances,
-                           balances_selection=balances_selection)
+                           balances_selection=balances_selection,
+                           primaries=primaries)
 
 
 @app.route('/jobs', methods=['GET','POST'])

@@ -48,6 +48,7 @@
 	<li><a href="#maps">Maps</a></li>
 	<li><a href="#capacities">Technology capacities</a></li>
 	<li><a href="#balances">Energy balances by carrier</a></li>
+	<li><a href="#primaries">Primary energy</a></li>
       </ul>
       <br></br>
     <h3 id="costs">Breakdown of yearly system costs</h3>
@@ -86,7 +87,13 @@
       <svg width="1000" height="400" id="{{balance}}_graph"></svg>
       <svg width="220" height="400" id="{{balance}}_graph_legend"></svg>
     {% endfor %}
+    </div>
 
+    <h3 id="primaries">Primary energy</h3>
+
+    <div id="primaries_div">
+      <svg width="1000" height="400" id="primaries_graph"></svg>
+      <svg width="220" height="400" id="primaries_graph_legend"></svg>
     </div>
     </div>
 
@@ -96,6 +103,7 @@
   capacities = {{capacities | tojson}};
   balances = {{balances | tojson}};
   balances_selection = {{balances_selection | tojson}};
+  primaries = {{primaries | tojson}};
   scenario_data = {{scenario_data | tojson}};
   scenarios = {{scenarios | tojson}};
 </script>

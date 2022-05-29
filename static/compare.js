@@ -283,6 +283,8 @@ draw_stack(costs["data"], costs["techs"], costs["color"], "system costs [bnEUR/a
 
 draw_stack(capacities["data"], capacities["techs"], capacities["color"], "capacities [GW]", "#capacities_graph", " GW");
 
+draw_stack(primaries["data"], primaries["techs"], primaries["color"], "primary energy [TWh/a]", "#primaries_graph", " TWh/a");
+
 
 let balances_div = document.getElementById("balances_div");
 
