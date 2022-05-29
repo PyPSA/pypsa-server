@@ -27,6 +27,7 @@
 	<th>system costs [bnEUR/a]</th>
 	<th>marginal abatement cost [EUR/tCO2]</th>
 	<th>difference to default</th>
+	<th>downloads</th>
       </tr>
       {% for scenario in scenarios %}
       <tr>
@@ -36,16 +37,32 @@
 	<td>{{ (scenario_data[scenario]["total_costs"]/1e9)|round(2) }}</td>
 	<td>{{ scenario_data[scenario]["co2_shadow"]|round(2) }}</td>
 	<td>{{ scenario_data[scenario]["diff"] }}</td>
+	<td><a href="../static/results/{{scenario}}/{{scenario}}.zip">zip file of all results</a> | <a href="../static/results/{{scenario}}/postnetworks/elec_s_45_lvopt__none_2050.nc">PyPSA network file</a> | <a href="../static/results/{{scenario}}/config.yaml">config.yaml file</a></td>
       </tr>
       {% endfor %}
     </table>
-    </div>
 
       <br></br>
     <h3>Breakdown of yearly system costs</h3>
 
     <div id="costs_div">
       <svg width="1000" height="400" id="costs_graph"></svg>
+    </div>
+
+    <h3>Maps</h3>
+
+    <p>starting grid | grid reinforcement and other investments | hydrogen network and electrolyser capacity</p>
+
+    {% for scenario in scenarios %}
+
+    <p>{{scenario}} | {{ scenario_data[scenario]["scenario_name"] }}</p>
+    <p>
+    <img src="../static/results/{{scenario}}/maps/elec_s_45_lvopt__none_2050-today.png" alt="today's grid">
+    <img src="../static/results/{{scenario}}/maps/elec_s_45_lvopt__none-costs-all_2050.png" alt="tomorrow's grid">
+    <img src="../static/results/{{scenario}}/maps/elec_s_45_lvopt__none-h2_network_2050.png" alt="hydrogen grid">
+    </p>
+          {% endfor %}
+
     </div>
 
 <script type="text/javascript">
