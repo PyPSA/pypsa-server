@@ -65,6 +65,7 @@
       } else if (selected.length > 10){
 	  document.getElementById("status").innerHTML="error, you cannot select more than ten scenarios to compare";
       } else {
+	  document.getElementById("status").innerHTML="";
 	  window.location.href = "./results/" + selected.join(",");
       };
   };
