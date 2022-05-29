@@ -63,11 +63,17 @@
     </p>
           {% endfor %}
 
+    <h3>Technology capacities</h3>
+
+    <div id="capacities_div">
+      <svg width="1000" height="400" id="capacities_graph"></svg>
+    </div>
     </div>
 
 <script type="text/javascript">
 
   costs = {{costs | tojson}};
+  capacities = {{capacities | tojson}};
   scenario_data = {{scenario_data | tojson}};
   scenarios = {{scenarios | tojson}};
 </script>

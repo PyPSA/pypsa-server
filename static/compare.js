@@ -1,21 +1,23 @@
 
 
-console.log(costs);
-
 let n_scenarios = scenarios.length;
 
 let scenario_names = [];
 
-let total_costs = [];
-
 for (i=0; i < n_scenarios; i++){
     scenario_names.push(scenario_data[scenarios[i]]["scenario_name"]);
-    total_costs.push(scenario_data[scenarios[i]]["total_costs"]);
 };
 
-function draw_costs(){
+function draw_stack(data, labels, color, ylabel, svgName, suffix){
 
-    let svgName = "#costs_graph";
+    let totals = [];
+    for(let s=0; s < n_scenarios; s++){
+	total = 0.;
+	for (let k=0; k < data[s].length; k++){
+	    total += data[s][k];
+	};
+	totals.push(total);
+    };
 
     let svgGraph = d3.select(svgName),
 	margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -28,32 +30,28 @@ function draw_costs(){
     let y = d3.scaleLinear().range([height, 0]);
 
     x.domain([0,n_scenarios]);
-    y.domain([0,Math.max(...total_costs)/1e9]).nice();
-
-    let suffix = " bnEUR/a";
+    y.domain([0,Math.max(...totals)]).nice();
 
     let tip = d3.tip()
 	.attr('class', 'd3-tip')
 	.offset([-8, 0])
 	.html(function(d,i) {
-	    return costs["techs"][i] + ": " + Math.abs(d).toFixed(1) + suffix;
+	    return labels[i] + ": " + Math.abs(d).toFixed(1) + suffix;
 	});
     svgGraph.call(tip);
 
-    for(let s=0; s < costs["data"].length; s++){
+    for(let s=0; s < data.length; s++){
 
 	var g = svgGraph.append("g")
             .attr("transform", "translate(" + (x(s) + margin.left) + "," + margin.top + ")");
 
 	let totals = [0.];
-	for (let k=0; k < costs["data"][s].length; k++){
-	    totals.push(totals[k] + costs["data"][s][k]);
+	for (let k=0; k < data[s].length; k++){
+	    totals.push(totals[k] + data[s][k]);
 	};
 
-	console.log(totals);
-
 	var layer = g.selectAll("rect")
-	    .data(costs["data"][s])
+	    .data(data[s])
 	    .enter().append("rect")
 	    .attr("x", x(0.1))
 	    .attr("width", x(0.6))
@@ -61,7 +59,7 @@ function draw_costs(){
         // following abs avoids rect with negative height e.g. -1e10
 	.attr("height", function(d,i) { return Math.abs((y(totals[i]) - y(totals[i+1])).toFixed(2)); })
     	.attr("width", x(0.8))
-        .style("fill", function(d, i) { return costs["color"][i];})
+        .style("fill", function(d, i) { return color[i];})
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide);
     };
@@ -74,8 +72,6 @@ function draw_costs(){
         .call(d3.axisLeft(y));
 
     var label = svgGraph.append("g").attr("class", "y-label");
-
-    let ylabel="system costs [bnEUR/a]";
 
     // text label for the y axis
     label.append("text")
@@ -104,4 +100,6 @@ function draw_costs(){
 };
 
 
-draw_costs();
+draw_stack(costs["data"], costs["techs"], costs["color"], "system costs [bnEUR/a]", "#costs_graph", " bnEUR/a");
+
+draw_stack(capacities["data"], capacities["techs"], capacities["color"], "capacities [GW]", "#capacities_graph", " GW");

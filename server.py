@@ -176,6 +176,7 @@ def compare_jobs(jobids):
     print(jobids)
 
     costs_df = pd.DataFrame()
+    capacities_df = pd.DataFrame()
 
     for jobid in jobids:
         if not os.path.isdir(f"static/results/{jobid}"):
@@ -184,21 +185,29 @@ def compare_jobs(jobids):
         costs_df[jobid] = pd.read_csv(f"static/results/{jobid}/csvs/costs.csv",
                                       index_col=list(range(3)),
                                       squeeze=True)
-
+        capacities_df[jobid] = pd.read_csv(f"static/results/{jobid}/csvs/capacities.csv",
+                                      index_col=list(range(2)),
+                                      squeeze=True)
     costs_df = costs_df.groupby(costs_df.index.get_level_values(2)).sum()
     costs_df = costs_df.groupby(costs_df.index.map(rename_techs)).sum()/1e9
     new_index = preferred_order.intersection(costs_df.index).append(costs_df.index.difference(preferred_order))
     costs_df = costs_df.loc[new_index]
 
-    costs_df["color"] = [config['plotting']['tech_colors'][i] for i in new_index]
-
     costs = {}
-
     costs["data"] = [costs_df[jobid].tolist() for jobid in jobids]
-
-    costs["color"] = costs_df.color.tolist()
     costs["techs"] = costs_df.index.tolist()
+    costs["color"] = [config['plotting']['tech_colors'][i] for i in costs_df.index]
 
+
+    capacities_df = capacities_df.groupby(level=1).sum()/1e3
+    capacities_df = capacities_df.groupby(capacities_df.index.map(rename_techs)).sum()
+    selection = ["gas CHP","biomass CHP","H2 Fuel Cell","OCGT","nuclear","solar PV rooftop","solar PV utility","offshore wind (DC)","offshore wind (AC)","onshore wind","hydroelectricity","Fischer-Tropsch","H2 Electrolysis","resistive heater","air heat pump","ground heat pump"]
+    capacities_df = capacities_df.loc[selection]
+
+    capacities = {}
+    capacities["data"] = [capacities_df[jobid].tolist() for jobid in jobids]
+    capacities["techs"] = capacities_df.index.tolist()
+    capacities["color"] = [config['plotting']['tech_colors'][i] for i in capacities_df.index]
 
     scenarios = pd.read_csv("static/scenarios.csv",
                             names=["scenario_name","datetime","co2_shadow","total_costs","diff","hashid"],
@@ -207,7 +216,8 @@ def compare_jobs(jobids):
     return render_template('compare.html',
                            scenarios=jobids,
                            scenario_data=scenarios.loc[jobids].T.to_dict(),
-                           costs=costs)
+                           costs=costs,
+                           capacities=capacities)
 
 
 @app.route('/results/<jobid>')
