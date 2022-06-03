@@ -32,7 +32,7 @@
 
     <p>This interface allows you to run custom optimisations for a sector-coupled model of the European energy system, <a href="https://github.com/PyPSA/pypsa-eur-sec">PyPSA-Eur-Sec</a>. You can, for example, explore different scenarios to reach net-zero carbon dioxide emissions across electricity, heating, transport and industry. There are more details and context on the underlying model in a <a href="https://nworbmot.org/energy/brown-empe.pdf">slide deck from October 2021</a>.</p>
 
-    <p>The model minimises the costs of the energy system assuming all capacity investments in generation, storage, energy conversion and energy transport can be re-optimised. Energy services (electricity, heating, transport, industrial demand) are provided at today's levels by default, but they can also be altered. Default cost assumptions are taken from forecasts for 2050, mainly from the <a href="https://ens.dk/en/our-services/projections-and-models/technology-data">Danish Energy Agency Technology Data</a>. A weighted average cost of capital of 7% is applied. 45 regions are assumed. A full year of representative weather and load data is used, but sampled n-hourly.</p>
+    <p>The model minimises the costs of the energy system assuming all capacity investments in generation, storage, energy conversion and energy transport can be re-optimised. Energy services (electricity, heating, transport, industrial demand) are provided at today's levels by default, but they can also be altered. Default cost assumptions are taken from forecasts for 2050, mainly from the <a href="https://ens.dk/en/our-services/projections-and-models/technology-data">Danish Energy Agency Technology Data</a>. A weighted average cost of capital of 7% is applied. 45 regions are assumed. A full year of representative weather and load data is used, but sampled n-hourly. Please carefully read the <a href="#limitations">limitations</a> below.</p>
 
     <br></br>
     <p>
@@ -68,21 +68,22 @@
       solved by the high-performance open source solver <a href="https://www.maths.ed.ac.uk/hall/HiGHS/">HiGHS</a>.</p>
 
     <br></br>
-    <h2>Limitations</h2>
+    <h2 id="limitations">Limitations</h2>
     <hr>
     <p>There are many limitations to the model. Only a selection are given here:
 
       <ul>
+	<li>For computational reasons, time series are only sampled n-hourly with maximum resolution of 25-hourly. This means that not all extreme events of high residual load are seen. It also leads to an underestimation of short-term flexibility requirements (e.g. for stationary batteries and demand-side management in battery electric vehicles) but correctly captures more costly medium (weekly) and seasonal flexibility needs. Some 3-hourly results are <a href='results'>available</a> for comparison.</li>
+	<li>The model assumes Europe is completely self-sufficient in clean energy and does not consider the import of clean electricity, hydrogen, ammonia, steel or hydrocarbons from outside Europe. Imports of green fuels from renewables-rich regions could reduce costs and, for example, the need for extensive hydrogen networks.</li>
+        <li>Some assumptions about the ratio of primary and secondary production for steel, aluminium and petrochemicals, as well as process switching, are made exogenously with a net-zero emission energy system in mind. For example, it is assumed that 70% of steel is produced via the secondary route (electric arc furnace (EAF)) and the remaining 30% is produced via a primary route with direct reduction of iron ore using hydrogen followed by EAF. The fraction of aluminium recycled via the  secondary route is raised to 80%. 60% of high value chemicals (HVC) come from the primary route, while the rest is recycled.</li>
+	<li>The model meets primary petrochemical feedstock with naphtha only and does not consider other pathways such as methanol-to-olefin processes.</li>
+	<li>Exogenous decisions are also met in the transport sector with net-zero emission systems in mind. For example, shipping moves to hydrogen (either liquid hydrogen or ammonia), all aviation is still supplied with liquid hydrocarbons, while the ratio of land vehicles between electric, hydrogen fuel cell and liquid hydrocarbon internal combustion engine can be set via the submission form.</li>
 	<li>The model may build infrastructure that does not meet with societal acceptance.</li>
 	<li>Infrastructure may not be feasible to build given supply chain and personnel training limitations, which are not included in the model. For example, the implementation of efficiency measures in buildings requires a large, trained workforce.</li>
-	<li>The model assumes energy independence in clean energy, and does not consider the import of clean hydrogen, ammonia, steel or hydrocarbons from outside Europe. Imports of green fuels from renewables-rich regions could reduce costs and, for example, the need for extensive hydrogen networks.</li>
-	<li>The model meets petrochemical feedstock with naphtha only and does not consider other pathways such as methanol-to-olefin processes.</li>
-	<li>There are a number of assumptions about recycling and process switching taken over from the main <a href="https://github.com/PyPSA/pypsa-eur-sec">PyPSA-Eur-Sec model</a>.</li>
 	<li>In this simplified 45-node model there are not enough model regions to simulate the energy networks properly.</li>
 	<li>There is not enough spatial and temporal resolution to see the full variability of wind, solar and demand.</li>
-	<li>Down-sampling to 25-hourly time series means not all extreme events of high residual load are seen, and the benefits of short-term hourly flexiblity (like stationary batteries and demand-side management in battery electric vehicles) are ignored. Some 3-hourly results are <a href='results'>available</a> for comparison.</li>
 	<li>Ideally decades of weather data would be used to sample historical weather patterns, as well as data that takes into account future climate change.</li>
-	<li>The pathway of asset investment from today until a low-carbon future should be optimised to see what needs to be done and when, and to minimise stranded assets. Pathway analysis with this model can be found in <a href="https://arxiv.org/abs/2109.09563">Victoria et al, 2021</a>.</li>
+	<li>The pathway of asset investment from today until a low-carbon future should be optimised to see what needs to be done and when, and to minimise stranded assets. Pathway analysis with this model can be found in <a href="https://arxiv.org/abs/2109.09563">Victoria et al, 2021</a>. Soon we will include pathway analysis on this website.</li>
       </ul>
 
     <br></br>
