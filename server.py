@@ -393,5 +393,34 @@ def jobid(jobid):
     return jsonify(result)
 
 
+
+@app.route('/series/<jobid>', methods=['GET'])
+def series(jobid):
+
+    series_csv = f"static/results/{jobid}/csvs/series.csv"
+
+    if not os.path.isfile(series_csv):
+        return jsonify({"status" : "Error", "error" : "Failed to find series."})
+
+    series_df = pd.read_csv(series_csv,
+                            index_col=0,
+                            header=[0,1],
+                            parse_dates=True)
+    series = {}
+    series["snapshots"] = [str(s) for s in series_df.index]
+
+    for sign in ["positive","negative"]:
+        series[sign] = {}
+        series[sign]["columns"] = series_df[sign].columns.tolist()
+        series[sign]["data"] = series_df[sign].values.tolist()
+        series[sign]["color"] = [config['plotting']['tech_colors'][i] for i in series_df[sign].columns]
+
+    print(series_df)
+
+    print(series)
+
+    return jsonify({"status" : "Success", "series" : series})
+
+
 if __name__ == '__main__':
     app.run(port='5002')
