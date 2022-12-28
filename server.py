@@ -71,6 +71,20 @@ ints = ["frequency"]
 
 float_upper_limit = 1e7
 
+
+balances_selection = ["AC", "low_voltage", "H2", "gas", "oil", "co2", "co2_stored", "residential_rural_heat", "urban_central_heat"]
+
+balances_names = {"AC" : "high voltage electricity",
+		  "low_voltage" : "low voltage electricity",
+		  "H2" : "hydrogen",
+		  "gas" : "methane",
+		  "oil" : "liquid hydrocarbon",
+		  "co2" : "CO2",
+		  "co2_stored" : "stored CO2",
+		  "residential_rural_heat" : "residential rural building heating",
+		  "urban_central_heat" : "urban district heating"}
+
+
 def sanitise_assumptions(assumptions):
     """
     Fix types of assumptions and check they are in correct
@@ -206,18 +220,6 @@ def resultsid(jobid):
     co2_carriers = ["co2","co2 stored","process emissions"]
     balance_selections = {i.replace(" ","_") : [i] for i in balances_df.index.levels[0]}
     balance_selections["energy"] = balances_df.index.levels[0].symmetric_difference(co2_carriers)
-
-    balances_selection = ["AC", "low_voltage", "H2", "gas", "oil", "co2", "co2_stored", "residential_rural_heat", "urban_central_heat"]
-
-    balances_names = {"AC" : "high voltage electricity",
-		      "low_voltage" : "low voltage electricity",
-		      "H2" : "hydrogen",
-		      "gas" : "methane",
-		      "oil" : "liquid hydrocarbon",
-		      "co2" : "CO2",
-		      "co2_stored" : "stored CO2",
-		      "residential_rural_heat" : "residential rural building heating",
-		      "urban_central_heat" : "urban district heating"}
 
     balances = {}
     for k in balances_selection:
@@ -405,21 +407,63 @@ def series(jobid):
     series_df = pd.read_csv(series_csv,
                             index_col=0,
                             header=[0,1],
-                            parse_dates=True)
+                            parse_dates=True).round(1)
+
+
     series = {}
+    series["status"] = "Success"
     series["snapshots"] = [str(s) for s in series_df.index]
 
-    for sign in ["positive","negative"]:
-        series[sign] = {}
-        series[sign]["columns"] = series_df[sign].columns.tolist()
-        series[sign]["data"] = series_df[sign].values.tolist()
-        series[sign]["color"] = [config['plotting']['tech_colors'][i] for i in series_df[sign].columns]
+    for carrier in balances_selection:
+        print("processing series for energy carrier", carrier)
 
-    print(series_df)
+        #group technologies
+        df = series_df[carrier.replace("_"," ")]
+        df.columns = [i[:-1] if ((i != "co2") and (i[-1:] in ["0","1","2","3"])) else i for i in df.columns]
+        df = df.groupby(df.columns.map(rename_techs),axis=1).sum()
 
-    print(series)
+        #drop inactive ones
+        to_drop = df.columns[df.abs().max() < 1]
+        print("dropping")
+        print(to_drop)
+        df.drop(to_drop,
+                axis=1,
+                inplace=True)
 
-    return jsonify({"status" : "Success", "series" : series})
+        #sort into positive and negative
+        separated = {}
+        separated["positive"] = pd.DataFrame(index=series_df.index,
+                                             dtype=float)
+        separated["negative"] = pd.DataFrame(index=series_df.index,
+                                             dtype=float)
+
+        for col in df.columns:
+            if df[col].min() > -1:
+                separated["positive"][col] = df[col]
+                separated["positive"][col][separated["positive"][col] < 0] = 0
+
+            elif df[col].max() < 1:
+                separated["negative"][col] = df[col]
+                separated["negative"][col][separated["negative"][col] > 0] = 0
+
+            else:
+                separated["positive"][col] = df[col]
+                separated["positive"][col][separated["positive"][col] < 0] = 0
+                separated["negative"][col] = df[col]
+                separated["negative"][col][separated["negative"][col] > 0] = 0
+
+        separated["negative"] *= -1
+
+        series[carrier] = {}
+
+        for sign in ["positive","negative"]:
+            series[carrier][sign] = {}
+            series[carrier][sign]["columns"] = separated[sign].columns.tolist()
+            series[carrier][sign]["data"] = separated[sign].values.tolist()
+            series[carrier][sign]["color"] = [config['plotting']['tech_colors'][i] for i in separated[sign].columns]
+
+
+    return jsonify(series)
 
 
 if __name__ == '__main__':

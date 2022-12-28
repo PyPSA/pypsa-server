@@ -126,7 +126,11 @@
     <p>Operational dispatch over a year to meet the demand (energy supply and storage withdrawal is positive, demand and storage charging is negative):
 
     <div id="series_div">
-      <svg width="1100" height="500" id="series_graph"></svg>
+      {% for balance in balances_selection %}
+      <h4>{{balances[balance]["name"]}} supply and demand time series</h4>
+      <svg width="1100" height="500" id="{{balance}}_power_graph"></svg>
+      <svg width="220" height="400" id="{{balance}}_power_graph_legend"></svg>
+      {% endfor %}
     </div>
     </div>
 

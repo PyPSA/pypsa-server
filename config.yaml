@@ -399,6 +399,8 @@ plotting:
     "today" : "#D2691E"
     "shipping" : "#6495ED"
     "electricity distribution grid" : "#777777"
+    "gas storage" : "#CC2200"
+    "oil storage" : "#CCCCCC"
   nice_names:
     # OCGT: "Gas"
     # OCGT marginal: "Gas (marginal)"

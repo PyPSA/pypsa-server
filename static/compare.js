@@ -303,19 +303,13 @@ for (k=0; k < balances_selection.length; k++){
 
 
 
-function draw_series(results){
+function draw_series(results, snapshots, balance){
 
-    console.log(results);
-
-    let snapshots = results["snapshots"];
-    let selection = [...Array(results["snapshots"].length).keys()];
-
-    console.log(snapshots);
-    console.log(selection);
+    let selection = [...Array(snapshots.length).keys()];
 
     // Inspired by https://bl.ocks.org/mbostock/3885211
 
-    var svgGraph = d3.select("#series_graph"),
+    var svgGraph = d3.select("#" + balance + "_power_graph"),
 	margin = {top: 20, right: 20, bottom: 110, left: 50},
 	marginContext = {top: 430, right: 20, bottom: 30, left: 50},
 	width = svgGraph.attr("width") - margin.left - margin.right,
@@ -534,12 +528,16 @@ get_series.onload = function () {
 	console.log("Failed with error",results["error"]);
     };
     if(status == "Success"){
-	series = results["series"];
-	console.log("Drawing now!",series);
-	for(var j=0; j < series.snapshots.length; j++) {
-	    series.snapshots[j] = parseDate(series.snapshots[j]);
+	let snapshots = results["snapshots"];
+	for(var j=0; j < snapshots.length; j++) {
+	    snapshots[j] = parseDate(snapshots[j]);
 	};
-	draw_series(series);
+	for (var k=0; k < balances_selection.length; k++){
+	    let balance = balances_selection[k];
+	    console.log("Drawing power time series for", balance);
+	    let series = results[balance];
+	    draw_series(series, snapshots, balance);
+	};
     };
 };
 get_series.send();
