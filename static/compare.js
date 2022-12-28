@@ -495,7 +495,7 @@ function draw_series(results, snapshots, balance){
 				      .scale(width / (s[1] - s[0]))
 				      .translate(-s[0], 0));
 	handle.attr("transform", function(d, i) { return "translate(" + [ s[i], - heightContext / 4] + ")"; });
-    }
+    };
 
     function zoomed() {
 	if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
@@ -506,8 +506,53 @@ function draw_series(results, snapshots, balance){
 	var newRange = x.range().map(t.invertX, t);
 	context.select(".brush").call(brush.move, newRange);
 	handle.attr("transform", function(d, i) { return "translate(" + [ newRange[i], - heightContext / 4] + ")"; });
-    }
+    };
 
+
+    //Legend
+
+    //slice to make copy
+    let labels = results["positive"]["columns"].slice().reverse().concat(results["negative"]["columns"]);
+    let color = results["positive"]["color"].slice().reverse().concat(results["negative"]["color"]);
+
+    //remove duplicate labels
+    console.log(balance, labels);
+    let toRemove = [];
+    for(var i=0; i < labels.length; i++){
+	let label = labels[i];
+	if(i != labels.indexOf(label)) {
+	    console.log(i, label, labels.indexOf(label));
+	    toRemove.push(i);
+	};
+    };
+
+    console.log("need to remove",toRemove);
+
+    for(var i=0; i < toRemove.length; i++){
+	// have to subtract i because array shifts to left each time
+	labels.splice(toRemove[i]-i, 1);
+	color.splice(toRemove[i]-i, 1);
+    };
+
+    let legendSVG = d3.select("#" + balance + "_power_graph_legend");
+
+    let legend = legendSVG.selectAll("g")
+	.data(labels)
+	.enter()
+	.append("g")
+	.attr("transform", function (d, i) {  return "translate(0," + (5 + i * 15) + ")" });
+
+    legend.append("rect")
+	.attr("x",0)
+	.attr("y",0)
+	.attr("width", 10)
+	.attr("height", 10)
+	.style("fill", function (d, i) { return color[i] });
+
+    legend.append("text")
+	.attr("x",20)
+	.attr("y",10)
+	.text(function (d, i) { return d});
 
 };
 
