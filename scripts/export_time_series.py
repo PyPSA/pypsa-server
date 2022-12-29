@@ -27,6 +27,7 @@ def export_time_series(network_filename, time_series_filename):
     n.stores["carrier"].replace("H2","hydrogen storage",inplace=True)
     n.stores["carrier"].replace("gas","gas storage",inplace=True)
     n.stores["carrier"].replace("oil","oil storage",inplace=True)
+    n.stores["carrier"].replace("co2","CO2 atmosphere",inplace=True)
 
     bus_carriers = n.buses.carrier.unique()
 

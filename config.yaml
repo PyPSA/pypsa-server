@@ -342,6 +342,7 @@ plotting:
     "CO2 sequestration" : "#123456"
     "CC" : "#000000"
     "co2" : "#123456"
+    "CO2 atmosphere" : "#123456"
     "co2 vent" : "#654321"
     "solid biomass for industry co2 from atmosphere" : "#654321"
     "solid biomass for industry co2 to stored": "#654321"
