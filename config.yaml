@@ -13,6 +13,7 @@ scenario:
   lv: opt #, 1.125, 1.25, 1.5, 2.0]# or opt
   clusters: 45 #[37m,90, 128, 181] #[45, 64, 90, 128, 181, 256] #, 362] # (2**np.r_[5.5:9:.5]).astype(int) minimum is 37
   frequency: 193
+  region: EU
   transport: True
   biomass: True
   heating: True

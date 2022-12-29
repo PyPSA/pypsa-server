@@ -69,7 +69,7 @@
 
     <p>Here you can customise settings for the model <a href="https://github.com/PyPSA/pypsa-eur-sec">PyPSA-Eur-Sec</a>, a sector-coupled model of the European energy system.  The model minimises the costs of the energy system assuming all capacity investments in generation, storage, energy conversion and energy transport can be re-optimised.
       Energy services (electricity, heating, transport, industrial demand) are provided at today's levels by default, but they can also be altered. Default cost assumptions are taken from forecasts for 2050, mainly from the <a href="https://ens.dk/en/our-services/projections-and-models/technology-data">Danish Energy Agency Technology Data</a>. A weighted average cost of capital of 7% is applied.  45 regions are assumed. A full year of representative weather and load data is used, but sampled n-hourly.</p>
-    <p>193-hourly temporal resolution takes only around 5 minute to solve, but gives reasonable results. This model can only be run at up to 25-hourly resolution (25-hourly takes around 16 hours to run). Higher resolutions are not offered via the interface here because of the computational burden, but some 3-hourly results are <a href='results'>available</a> for comparison. If you want to run at up to hourly resolution, download the full model and run it yourself, or contact us to discuss terms.</p>
+    <p>193-hourly temporal resolution takes only around 5 minute to solve, but gives reasonable results. This model can only be run at up to 25-hourly resolution for Europe (25-hourly takes around 16 hours to run) or 3-hourly for single countries. Higher resolutions are not offered via the interface here because of the computational burden, but some 3-hourly results for Europe are <a href='results'>available</a> for comparison. If you want to run at up to hourly resolution, download the full model and run it yourself, or contact us to discuss terms.</p>
     <p>Please see the <a href='./'>main page</a> for a list of the model's limitations.</p>
     <section id="basic-settings">
     <h2>Basic scenario settings</h2>
@@ -81,13 +81,26 @@
 
     <form>
       <div class="form-group row">
+        <label class="col-sm-8 col-form-label" for="region">
+          Region (whole of Europe or single country)
+        </label>
+        <div class="col-sm-2">
+	  <select class="form-control" name="region" id="region">
+	    {% for region in country_fractions.keys() %}
+	    <option value="{{ region }}">{{ region }}</option>
+	    {% endfor %}
+	  </select>
+        </div>
+        <div class="col-sm-2">
+          <small class="form-text text-muted">two-letter ISO code</small>
+        </div>
         <label class="col-sm-8 col-form-label" for="co2_limit">
           Fraction of 1990 CO2 emissions allowed
         </label>
         <div class="col-sm-2">
           <input class="form-control" type="number" name="co2_limit" id="co2_limit" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">per unit</small>
         </div>
         <label class="col-sm-8 col-form-label" for="frequency">
@@ -96,8 +109,8 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="frequency" id="frequency" value=1.0>
         </div>
-        <div classe="col-sm-2">
-          <small class="form-text text-muted">integer >= 25</small>
+        <div class="col-sm-2">
+          <small class="form-text text-muted">integer >= 25 for Europe, >= 3 for single countries</small>
         </div>
       </div>
     </form>
@@ -116,7 +129,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="electricity_demand" id="electricity_demand" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">per unit</small>
         </div>
         <label class="col-sm-8 col-form-label" for="space_heat_demand">
@@ -125,7 +138,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="space_heat_demand" id="space_heat_demand" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">per unit</small>
         </div>
         <label class="col-sm-8 col-form-label" for="water_heat_demand">
@@ -134,7 +147,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="water_heat_demand" id="water_heat_demand" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">per unit</small>
         </div>
         <label class="col-sm-8 col-form-label" for="land_transport_demand">
@@ -143,7 +156,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="land_transport_demand" id="land_transport_demand" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">per unit</small>
         </div>
         <label class="col-sm-8 col-form-label" for="shipping_demand">
@@ -152,7 +165,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="shipping_demand" id="shipping_demand" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">per unit</small>
         </div>
         <label class="col-sm-8 col-form-label" for="aviation_demand">
@@ -161,7 +174,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="aviation_demand" id="aviation_demand" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">per unit</small>
         </div>
         <label class="col-sm-8 col-form-label" for="industry_demand">
@@ -170,7 +183,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="industry_demand" id="industry_demand" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">per unit</small>
         </div>
       </div>
@@ -190,7 +203,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="co2_sequestration_potential" id="co2_sequestration_potential" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">MtCO2/a</small>
         </div>
         <label class="col-sm-8 col-form-label" for="land_transport_electric_share">
@@ -199,7 +212,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="land_transport_electric_share" id="land_transport_electric_share" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">per unit</small>
         </div>
         <label class="col-sm-8 col-form-label" for="land_transport_fuel_cell_share">
@@ -208,7 +221,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="land_transport_fuel_cell_share" id="land_transport_fuel_cell_share" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">per unit</small>
         </div>
       </div>
@@ -258,7 +271,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="solar_cost" id="solar_cost" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">EUR/kW</small>
         </div>
         <label class="col-sm-8 col-form-label" for="onwind_cost">
@@ -267,7 +280,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="onwind_cost" id="onwind_cost" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">EUR/kW</small>
         </div>
         <label class="col-sm-8 col-form-label" for="offwind_cost">
@@ -276,7 +289,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="offwind_cost" id="offwind_cost" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">EUR/kW</small>
         </div>
         <label class="col-sm-8 col-form-label" for="nuclear_cost">
@@ -285,7 +298,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="nuclear_cost" id="nuclear_cost" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">EUR/kW</small>
         </div>
         <label class="col-sm-8 col-form-label" for="electrolysis_cost">
@@ -294,7 +307,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="electrolysis_cost" id="electrolysis_cost" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">EUR/kW</small>
         </div>
         <label class="col-sm-8 col-form-label" for="land_transmission_cost">
@@ -303,7 +316,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="land_transmission_cost" id="land_transmission_cost" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">EUR/MW/km</small>
         </div>
         <label class="col-sm-8 col-form-label" for="h2_pipeline_cost">
@@ -312,7 +325,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="h2_pipeline_cost" id="h2_pipeline_cost" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">EUR/MW/km</small>
         </div>
         <label class="col-sm-8 col-form-label" for="co2_sequestration_cost">
@@ -321,7 +334,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="co2_sequestration_cost" id="co2_sequestration_cost" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">EUR/tCO2</small>
         </div>
       </div>
@@ -344,7 +357,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="solar_potential" id="solar_potential" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">per unit</small>
         </div>
         <label class="col-sm-8 col-form-label" for="onwind_potential">
@@ -353,7 +366,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="onwind_potential" id="onwind_potential" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">per unit</small>
         </div>
         <label class="col-sm-8 col-form-label" for="offwind_potential">
@@ -362,7 +375,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="offwind_potential" id="offwind_potential" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">per unit</small>
         </div>
       </div>
@@ -383,7 +396,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="linemax_extension" id="linemax_extension" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">GW</small>
         </div>
         <label class="col-sm-8 col-form-label" for="line_volume">
@@ -392,7 +405,7 @@
         <div class="col-sm-2">
           <input class="form-control" type="number" name="line_volume" id="line_volume" value=1.0>
         </div>
-        <div classe="col-sm-2">
+        <div class="col-sm-2">
           <small class="form-text text-muted">per unit</small>
         </div>
       </div>
@@ -441,7 +454,10 @@
       target: '#mainNav',
       offset: 56
     });
-  }
+  };
+
+
+  country_fractions = {{country_fractions | tojson}};
 </script>
 </body>
 </html>

@@ -15,6 +15,7 @@
 
 
 assumptions = {"scenario_name" : "no name",
+	       "region" : "EU",
                "co2_limit" : 0.,
 	       "frequency" : 193,
 	       "land_transport_electric_share" : 0.85,
@@ -46,6 +47,7 @@ assumptions = {"scenario_name" : "no name",
 	       "co2_sequestration_cost" : 20,
 	      };
 
+original_co2_sequestration_potential = assumptions["co2_sequestration_potential"];
 
 for (let i = 0; i < Object.keys(assumptions).length; i++){
     let key = Object.keys(assumptions)[i];
@@ -56,8 +58,18 @@ for (let i = 0; i < Object.keys(assumptions).length; i++){
 	    assumptions[key] = this.checked;
 	    console.log(key,"changed to",assumptions[key]);
 	});
-    }
-    else{
+    } else if (key === "region"){
+	document.getElementsByName(key)[0].value = value;
+	d3.selectAll("select[name='region']").on("change", function(){
+	    assumptions[key] = this.value;
+	    console.log(key,"changed to",assumptions[key]);
+	    console.log(this.value,"makes up",country_fractions[this.value],"of the European total");
+	    let co2_value = (country_fractions[this.value]*original_co2_sequestration_potential).toFixed(2);
+	    document.getElementsByName("co2_sequestration_potential")[0].value = co2_value;
+	    assumptions["co2_sequestration_potential"] = co2_value;
+	    console.log("co2_sequestration_potential","changed to",assumptions["co2_sequestration_potential"]);
+	});
+    } else{
 	document.getElementsByName(key)[0].value = value;
 	d3.selectAll("input[name='" + key + "']").on("change", function(){
 	    assumptions[key] = this.value;

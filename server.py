@@ -40,6 +40,7 @@ from plot_summary import rename_techs, preferred_order
 with open(f"config.yaml",'r') as f:
     config = yaml.safe_load(f)
 
+country_fractions = pd.read_csv("resources/country_fractions.csv",index_col=0).squeeze("columns")
 
 #in seconds
 job_timeout=60*60*20
@@ -65,7 +66,7 @@ floats = ["co2_limit",
           "electrolysis_cost", "h2_pipeline_cost","co2_sequestration_cost",
           "land_transmission_cost", "linemax_extension", "line_volume"]
 
-strings = ["scenario_name"]
+strings = ["scenario_name","region"]
 
 ints = ["frequency"]
 
@@ -137,6 +138,8 @@ def compute_assumptions_hash(assumptions):
     results_string = ""
     for item in ints+booleans+floats:
         results_string += "&{}={}".format(item,assumptions[item])
+    if assumptions["region"] != "EU":
+        results_string += "&region={}".format(assumptions["region"])
     hashid = hashlib.md5(results_string.encode()).hexdigest()
     return hashid
 
@@ -147,7 +150,8 @@ def root():
 
 @app.route('/submit')
 def submit():
-    return render_template('submit.html')
+    return render_template('submit.html',
+                           country_fractions=country_fractions.to_dict())
 
 @app.route('/results')
 def results():

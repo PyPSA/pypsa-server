@@ -48,6 +48,8 @@ override_component_attrs["Store"].loc["build_year"] = ["integer","year",np.nan,"
 override_component_attrs["Store"].loc["lifetime"] = ["float","years",np.nan,"lifetime","Input (optional)"]
 
 
+country_fractions = pd.read_csv("resources/country_fractions.csv",index_col=0).squeeze("columns")
+
 
 def add_lifetime_wind_solar(n):
     """
@@ -1789,7 +1791,51 @@ def get_parameter(item):
     else:
         return item
 
+def reduce_network(original, ct):
 
+    n = original.copy()
+
+    fraction = country_fractions.loc[ct]
+
+    print(ct,"is",fraction,"of original loads")
+
+    nodes_to_keep = n.buses.index[(n.buses.location.str[:2] == ct)^(n.buses.location == "EU")].to_list()
+
+    print(nodes_to_keep)
+
+    n.buses.drop(n.buses.index.symmetric_difference(nodes_to_keep),
+                 inplace=True)
+
+    #include this for bivalent links with no 3rd node
+    nodes_to_keep.extend([""])
+
+    for c in n.iterate_components(["Generator","Link","Line","Store","StorageUnit","Load"]):
+        if c.name == "Line":
+            location_boolean = c.df.bus0.isin(nodes_to_keep) & c.df.bus1.isin(nodes_to_keep)
+        elif c.name == "Link":
+            location_boolean = c.df.bus0.isin(nodes_to_keep) & c.df.bus1.isin(nodes_to_keep) & c.df.bus2.isin(nodes_to_keep)
+        else:
+            location_boolean = c.df.bus.isin(nodes_to_keep)
+        to_keep = c.df.index[location_boolean]
+        to_drop = c.df.index.symmetric_difference(to_keep)
+        c.df.drop(to_drop,
+                  inplace=True)
+
+        for attr in c.pnl:
+            keep = c.pnl[attr].columns.isin(c.df.index)
+            c.pnl[attr].drop(c.pnl[attr].columns[~keep],
+                             axis=1,
+                             inplace=True)
+
+    global_loads = n.loads.index[n.buses.location[n.loads.bus] == "EU"]
+    n.loads.loc[global_loads,"p_set"] *= fraction
+
+    global_stores = n.stores.index[n.buses.location[n.stores.bus] == "EU"]
+    n.stores.loc[global_stores,"e_initial"] *= fraction
+    n.stores.loc[global_stores,"e_nom_max"] *= fraction
+    n.stores.loc[global_stores,"e_nom"] *= fraction
+
+    return n
 
 if __name__ == "__main__":
 
@@ -1911,6 +1957,12 @@ if __name__ == "__main__":
 
     aviation_loads = n.loads.index[n.loads.carrier.isin(['kerosene for aviation', 'aviation oil emissions'])]
     n.loads.loc[aviation_loads, 'p_set'] *= scenario['aviation_demand']
+
+    if scenario["region"] != "EU":
+        n = reduce_network(n, scenario["region"])
+
+        #this needs to be reset in case the user altered it in interface
+        n.stores.at["co2 stored","e_nom_max"] = scenario['co2_sequestration_potential']*1e6
 
     set_line_volume_limit(n, scenario['line_volume'])
 

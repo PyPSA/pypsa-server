@@ -18,7 +18,8 @@ import os, snakemake, yaml, datetime
 from rq import get_current_job
 import pandas as pd
 
-resolution_limit = 25
+resolution_limit_eu = 25
+resolution_limit_ct = 3
 
 def solve(assumptions):
 
@@ -48,7 +49,7 @@ def solve(assumptions):
     default["run"] = run_name
     default["scenario"]["datetime"] = str(datetime.datetime.now())
 
-    for item in ["scenario_name","co2_limit","frequency","line_volume","linemax_extension",
+    for item in ["scenario_name","co2_limit","region","frequency","line_volume","linemax_extension",
                  "land_transport_electric_share","land_transport_fuel_cell_share",
                  "bev_dsm","v2g",
                  "central","tes",
@@ -73,8 +74,11 @@ def solve(assumptions):
         if forbidden in default["scenario"]["scenario_name"]:
             return {"error" : "Scenario name cannot contain commas or whitespace"}
 
-    if default["scenario"]["frequency"] < resolution_limit:
-        return {"error" : f"Frequency must be {resolution_limit}-hourly or greater for computational reasons"}
+    if (default["scenario"]["region"] == "EU") and (default["scenario"]["frequency"] < resolution_limit_eu):
+        return {"error" : f"Frequency must be {resolution_limit_eu}-hourly or greater for Europe for computational reasons"}
+
+    if (default["scenario"]["region"] != "EU") and (default["scenario"]["frequency"] < resolution_limit_ct):
+        return {"error" : f"Frequency must be {resolution_limit_ct}-hourly or greater for single countries for computational reasons"}
 
     if default["scenario"]["line_volume"] < 1.0:
         return {"error" : "Line volume limit must be greater than 1.0"}
