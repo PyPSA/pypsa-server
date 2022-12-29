@@ -456,10 +456,17 @@ def series(jobid):
 
         series[carrier] = {}
 
+        if carrier in ["co2", "co2_stored"]:
+            series[carrier]["label"] = "CO2 flow"
+            series[carrier]["units"] = "ktCO2/h"
+        else:
+            series[carrier]["label"] = "power"
+            series[carrier]["units"] = "GW"
+
         for sign in ["positive","negative"]:
             series[carrier][sign] = {}
             series[carrier][sign]["columns"] = separated[sign].columns.tolist()
-            series[carrier][sign]["data"] = separated[sign].values.tolist()
+            series[carrier][sign]["data"] = (separated[sign].values/1e3).tolist()
             series[carrier][sign]["color"] = [config['plotting']['tech_colors'][i] for i in separated[sign].columns]
 
 
