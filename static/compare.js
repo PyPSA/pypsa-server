@@ -558,7 +558,8 @@ function draw_series(results, snapshots, balance){
 
 
 
-var jobid = scenarios[0];
+
+function fetch_series(jobid){
 
 var get_series = new XMLHttpRequest();
 
@@ -586,3 +587,15 @@ get_series.onload = function () {
     };
 };
 get_series.send();
+};
+
+window.onload = function() {
+    console.log('Page is loaded, fetching time series data for first scenario',scenarios[0]);
+    fetch_series(scenarios[0]);
+};
+
+d3.select("#scenario_selection").on("change", function(){
+    let jobid = this.value;
+    console.log("scenario for time series changed to tech scenario change to",jobid,"so fetching it");
+    fetch_series(jobid);
+});

@@ -123,7 +123,15 @@
 
     <h3 id="series">Time series for system operation</h3>
 
-    <p>Operational dispatch over a year to meet the demand (energy supply and storage withdrawal is positive, demand and storage charging is negative):
+
+    <div class="form-group">
+      <label for="scenario_selection">Select scenario to show operational dispatch over a year to meet the demand (energy supply and storage withdrawal is positive, demand and storage charging is negative)</label>
+      <select class="form-control" name="tech_scenario" id="scenario_selection">
+	{% for scenario in scenarios %}
+	<option value="{{ scenario }}">{{scenario }} - {{ scenario_data[scenario]["scenario_name"] }}</option>
+	{% endfor %}
+      </select>
+    </div>
 
     <div id="series_div">
       {% for balance in balances_selection %}
