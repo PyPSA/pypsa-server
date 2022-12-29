@@ -30,7 +30,8 @@ rule plot_summary:
         costs=config['summary_dir'] + '/' + config['run'] + '/csvs/costs.csv',
         energy=config['summary_dir'] + '/' + config['run'] + '/csvs/energy.csv',
         balances=config['summary_dir'] + '/' + config['run'] + '/csvs/supply_energy.csv',
-        capacities=config['summary_dir'] + '/' + config['run'] + '/csvs/capacities.csv'
+        capacities=config['summary_dir'] + '/' + config['run'] + '/csvs/capacities.csv',
+        series=config['summary_dir'] + '/' + config['run'] + '/csvs/series.csv'
     output:
         costs=config['summary_dir'] + '/' + config['run'] + '/graphs/costs.pdf',
         capacities=config['summary_dir'] + '/' + config['run'] + '/graphs/capacities.pdf',
@@ -67,6 +68,16 @@ rule make_summary:
     resources: mem_mb=10000
     script:
         'scripts/make_summary.py'
+
+rule export_time_series:
+    input:
+        network=expand(config['results_dir'] + config['run'] + "/postnetworks/elec_s{simpl}_{clusters}_lv{lv}_{opts}_{sector_opts}_{planning_horizons}.nc",simpl="",clusters=config['scenario']['clusters'],lv=config['scenario']['lv'],opts="",sector_opts="none",planning_horizons=config['scenario']['planning_horizon'])
+    output:
+        series=config['summary_dir'] + '/' + config['run'] + '/csvs/series.csv'
+    threads: 2
+    resources: mem_mb=10000
+    script:
+        'scripts/export_time_series.py'
 
 
 rule solve_network:
