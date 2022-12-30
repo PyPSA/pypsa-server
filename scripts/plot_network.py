@@ -141,7 +141,7 @@ def plot_map(network, components=["links", "stores", "storage_units", "generator
     costs = costs.stack()  # .sort_index()
 
     # hack because impossible to drop buses...
-    n.buses.loc["EU gas", ["x", "y"]] = n.buses.loc["DE0 0", ["x", "y"]]
+    n.buses.loc["EU gas", ["x", "y"]] = [13.4, 52.5]
 
     n.links.drop(n.links.index[(n.links.carrier != "DC") & (
         n.links.carrier != "B2B")], inplace=True)
@@ -335,7 +335,7 @@ def plot_map_without(network):
     dc_color = "m"
 
     # hack because impossible to drop buses...
-    n.buses.loc["EU gas", ["x", "y"]] = n.buses.loc["DE0 0", ["x", "y"]]
+    n.buses.loc["EU gas", ["x", "y"]] = [13.4, 52.5]
 
     n.links.drop(n.links.index[(n.links.carrier != "DC") & (
         n.links.carrier != "B2B")], inplace=True)
