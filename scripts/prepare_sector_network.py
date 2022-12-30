@@ -605,14 +605,14 @@ def add_generation(network):
                      e_nom_extendable=True,
                      e_cyclic=True,
                      carrier=carrier,
-                     capital_cost=0.) #could correct to e.g. 0.2 EUR/kWh * annuity and O&M
+                     capital_cost=1) # symbolic cost for FOM of 1 EUR/MWh/a => 10 EUR/MWh => 0.01 EUR/kWh #could correct to e.g. 0.2 EUR/kWh * annuity and O&M
 
         network.add("Generator",
                     "EU " + carrier,
                     bus="EU " + carrier,
                     p_nom_extendable=True,
                     carrier=carrier,
-                    capital_cost=0.,
+                    capital_cost=1, # symbolic cost of 1 EUR/MW/a => 10 EUR/MW => 0.01 EUR/kW
                     marginal_cost=costs.at[carrier,'fuel'])
 
 
@@ -1612,7 +1612,7 @@ def add_industry(network):
                      e_nom_extendable=True,
                      e_cyclic=True,
                      carrier="oil",
-                     capital_cost=0.) #could correct to e.g. 0.001 EUR/kWh * annuity and O&M
+                     capital_cost=1) # symbolic cost for FOM of 1 EUR/MWh/a => 10 EUR/MWh => 0.01 EUR/kWh #could correct to e.g. 0.001 EUR/kWh * annuity and O&M
 
     if "EU oil" not in network.generators.index:
         network.add("Generator",
@@ -1620,7 +1620,7 @@ def add_industry(network):
                     bus="EU oil",
                     p_nom_extendable=True,
                     carrier="oil",
-                    capital_cost=0.,
+                    capital_cost=1, # symbolic cost of 1 EUR/MW/a => 10 EUR/MW => 0.01 EUR/kW
                     marginal_cost=costs.at["oil",'fuel'])
 
     if options["oil_boilers"]:
