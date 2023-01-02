@@ -240,12 +240,12 @@ plotting:
       linewidth_factor: 3.e+3 # 1.e+3  #3.e+3
 
   costs_max: 1000
-  costs_threshold: 1
+  costs_threshold: 0.001 #per unit of total costs
 
 
   energy_max: 20000.
   energy_min: -15000.
-  energy_threshold: 50.
+  energy_threshold: 0.001 #per unit of total energy
 
 
   vre_techs: ["onwind", "offwind-ac", "offwind-dc", "solar", "ror"]

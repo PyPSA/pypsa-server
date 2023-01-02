@@ -74,7 +74,7 @@ def plot_costs():
 
     df = df.groupby(df.index.map(rename_techs)).sum()
 
-    to_drop = df.index[df.max(axis=1) < snakemake.config['plotting']['costs_threshold']]
+    to_drop = df.index[df.max(axis=1) < snakemake.config['plotting']['costs_threshold']*df.sum().max()]
 
     print("dropping")
 
@@ -130,7 +130,7 @@ def plot_capacities():
 
     selection = ["gas CHP","biomass CHP","H2 Fuel Cell","OCGT","nuclear","solar PV rooftop","solar PV utility","offshore wind (DC)","offshore wind (AC)","onshore wind","hydroelectricity","Fischer-Tropsch","H2 Electrolysis","resistive heater","air heat pump","ground heat pump"]
 
-    df = df.loc[selection]
+    df = df.loc[[s for s in selection if s in df.index]]
 
     fig, ax = plt.subplots()
     fig.set_size_inches((12,8))
@@ -173,7 +173,7 @@ def plot_energy():
 
     df = df.groupby(df.index.map(rename_techs)).sum()
 
-    to_drop = df.index[df.abs().max(axis=1) < snakemake.config['plotting']['energy_threshold']]
+    to_drop = df.index[df.abs().max(axis=1) < snakemake.config['plotting']['energy_threshold']*df.abs().sum().max()]
 
     print("dropping")
 

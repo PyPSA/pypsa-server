@@ -260,6 +260,12 @@ def calculate_energy(n,label,energy):
             c_energies = pd.Series(0.,c.df.carrier.unique())
             for port in [col[3:] for col in c.df.columns if col[:3] == "bus"]:
                 totals = c.pnl["p"+port].multiply(n.snapshot_weightings.objective,axis=0).sum()
+
+                #this escape is necessary because some nodes without CHP have no bus4 like BG0 0
+                #copied from energy-island
+                if totals.empty:
+                    continue
+
                 #remove values where bus is missing (bug in nomopyomo)
                 no_bus = c.df.index[c.df["bus"+port] == ""]
                 totals.loc[no_bus] = n.component_attrs[c.name].loc["p"+port,"default"]
@@ -372,7 +378,7 @@ def calculate_metrics(n,label,metrics):
     metrics.at["line_volume_AC",label] = (n.lines.length*n.lines.s_nom_opt).sum()
     metrics.at["line_volume",label] = metrics.loc[["line_volume_AC","line_volume_DC"],label].sum()
 
-    if hasattr(n,"line_volume_limit"):
+    if hasattr(n,"line_volume_limit") and hasattr(n,"line_volume_shadow"):
         metrics.at["line_volume_limit",label] = n.line_volume_limit
         metrics.at["line_volume_shadow",label] = n.line_volume_limit_dual
 

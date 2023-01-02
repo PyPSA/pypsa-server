@@ -350,6 +350,10 @@ def solve_network(n, config=None, solver_log=None, opts=None):
 
         logger.info("Starting last run with fixed extendable lines")
 
+    else:
+        logger.info("There were no extendable lines, so just running as is")
+        status, termination_condition = run_lopf(n, allow_warning_status=True, fix_ext_lines=True)
+
         # Not really needed, could also be taken out
         # if 'snakemake' in globals():
         #     fn = os.path.basename(snakemake.output[0])

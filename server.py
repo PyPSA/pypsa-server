@@ -193,7 +193,7 @@ def resultsid(jobid):
 
     costs_df = costs_df.groupby(costs_df.index.get_level_values(2)).sum()
     costs_df = costs_df.groupby(costs_df.index.map(rename_techs)).sum()/1e9
-    to_drop = costs_df.index[costs_df.max(axis=1) < config['plotting']['costs_threshold']]
+    to_drop = costs_df.index[costs_df.max(axis=1) < config['plotting']['costs_threshold']*costs_df.sum().max()]
     print("dropping")
     print(costs_df.loc[to_drop])
     costs_df = costs_df.drop(to_drop)
@@ -211,7 +211,7 @@ def resultsid(jobid):
     capacities_df = capacities_df.groupby(level=1).sum()/1e3
     capacities_df = capacities_df.groupby(capacities_df.index.map(rename_techs)).sum()
     selection = ["gas CHP","biomass CHP","H2 Fuel Cell","OCGT","nuclear","solar PV rooftop","solar PV utility","offshore wind (DC)","offshore wind (AC)","onshore wind","hydroelectricity","Fischer-Tropsch","H2 Electrolysis","resistive heater","air heat pump","ground heat pump"]
-    capacities_df = capacities_df.loc[selection]
+    capacities_df = capacities_df.loc[[s for s in selection if s in capacities_df.index]]
 
     capacities = {}
     capacities["data"] = [capacities_df[jobid].tolist() for jobid in jobids]
@@ -227,6 +227,8 @@ def resultsid(jobid):
 
     balances = {}
     for k in balances_selection:
+        if k not in balance_selections:
+            continue
 
         balances[k] = {}
         balances[k]["name"] = balances_names[k]
@@ -244,7 +246,7 @@ def resultsid(jobid):
 
         new_index = preferred_order.intersection(df.index).append(df.index.difference(preferred_order))
         df = df.loc[new_index]
-        to_drop = df.index[df.abs().max(axis=1) < config['plotting']['energy_threshold']/10]
+        to_drop = df.index[df.abs().max(axis=1) < config['plotting']['energy_threshold']*df.abs().sum().max()]
         print("dropping")
         print(df.loc[to_drop])
         df = df.drop(to_drop)
@@ -333,7 +335,7 @@ def resultsid(jobid):
                            costs=costs,
                            capacities=capacities,
                            balances=balances,
-                           balances_selection=balances_selection,
+                           balances_selection=[k for k in balances_selection if k in balance_selections],
                            primaries=primaries,
                            finals=finals)
 
@@ -419,6 +421,9 @@ def series(jobid):
     series["snapshots"] = [str(s) for s in series_df.index]
 
     for carrier in balances_selection:
+        if carrier.replace("_"," ") not in series_df:
+            continue
+
         print("processing series for energy carrier", carrier)
 
         #group technologies
