@@ -8,8 +8,6 @@ import os
 
 import pypsa
 
-from pypsa.linopt import get_var, linexpr, define_constraints
-
 from pypsa.descriptors import free_output_series_dataframes
 
 # Suppress logging of the slack bus choices
@@ -107,35 +105,43 @@ def add_opts_constraints(n, opts=None):
         ext_gens_i = n.generators.index[n.generators.carrier.isin(conv_techs) & n.generators.p_nom_extendable]
         n.model.safe_peakdemand = pypsa.opt.Constraint(expr=sum(n.model.generator_p_nom[gen] for gen in ext_gens_i) >= peakdemand - exist_conv_caps)
 
+
 def add_eps_storage_constraint(n):
     if not hasattr(n, 'epsilon'):
         n.epsilon = 1e-5
     fix_sus_i = n.storage_units.index[~ n.storage_units.p_nom_extendable]
     n.model.objective.expr += sum(n.epsilon * n.model.state_of_charge[su, n.snapshots[0]] for su in fix_sus_i)
 
+
 def add_battery_constraints(n):
+    """
+    Add constraint ensuring that charger = discharger, i.e.
+    1 * charger_size - efficiency * discharger_size = 0
+    """
+    if not n.links.p_nom_extendable.any():
+        return
 
-    chargers = n.links.index[n.links.carrier.str.contains("battery charger") & n.links.p_nom_extendable]
-    dischargers = chargers.str.replace("charger","discharger")
+    discharger_bool = n.links.index.str.contains("battery discharger")
+    charger_bool = n.links.index.str.contains("battery charger")
 
-    link_p_nom = get_var(n, "Link", "p_nom")
+    dischargers_ext = n.links[discharger_bool].query("p_nom_extendable").index
+    chargers_ext = n.links[charger_bool].query("p_nom_extendable").index
 
-    lhs = linexpr((1,link_p_nom[chargers]),
-                  (-n.links.loc[dischargers, "efficiency"].values,
-                   link_p_nom[dischargers].values))
-
-    define_constraints(n, lhs, "=", 0, 'Link', 'charger_ratio')
+    eff = n.links.efficiency[dischargers_ext].values
+    lhs = (
+        n.model["Link-p_nom"].loc[chargers_ext]
+        - n.model["Link-p_nom"].loc[dischargers_ext] * eff
+    )
+    n.model.add_constraints(lhs == 0, name="Link-charger_ratio")
 
 
 def add_chp_constraints(n):
-
     electric_bool = (n.links.index.str.contains("urban central")
                      & n.links.index.str.contains("CHP")
                      & n.links.index.str.contains("electric"))
     heat_bool = (n.links.index.str.contains("urban central")
                  & n.links.index.str.contains("CHP")
                  & n.links.index.str.contains("heat"))
-
     electric = n.links.index[electric_bool]
     heat = n.links.index[heat_bool]
     electric_ext = n.links.index[electric_bool & n.links.p_nom_extendable]
@@ -143,59 +149,43 @@ def add_chp_constraints(n):
     electric_fix = n.links.index[electric_bool & ~n.links.p_nom_extendable]
     heat_fix = n.links.index[heat_bool & ~n.links.p_nom_extendable]
 
+    p = n.model["Link-p"]  # dimension: [time, link]
 
+    # output ratio between heat and electricity and top_iso_fuel_line for extendable
     if not electric_ext.empty:
+        p_nom = n.model["Link-p_nom"]
 
-        link_p_nom = get_var(n, "Link", "p_nom")
+        lhs = (
+            p_nom.loc[electric_ext]
+            * (n.links.p_nom_ratio * n.links.efficiency)[electric_ext].values
+            - p_nom.loc[heat_ext] * n.links.efficiency[heat_ext].values
+        )
+        n.model.add_constraints(lhs == 0, name="chplink-fix_p_nom_ratio")
 
-        #ratio of output heat to electricity set by p_nom_ratio
-        lhs = linexpr((n.links.loc[electric_ext,"efficiency"]
-                       *n.links.loc[electric_ext,'p_nom_ratio'],
-                       link_p_nom[electric_ext]),
-                      (-n.links.loc[heat_ext,"efficiency"].values,
-                       link_p_nom[heat_ext].values))
-        define_constraints(n, lhs, "=", 0, 'chplink', 'fix_p_nom_ratio')
+        rename = {"Link-ext": "Link"}
+        lhs = (
+            p.loc[:, electric_ext]
+            + p.loc[:, heat_ext]
+            - p_nom.rename(rename).loc[electric_ext]
+        )
+        n.model.add_constraints(lhs <= 0, name="chplink-top_iso_fuel_line_ext")
 
-
-    if not electric.empty:
-
-        link_p = get_var(n, "Link", "p")
-
-        #backpressure
-        lhs = linexpr((n.links.loc[electric,'c_b'].values
-                       *n.links.loc[heat,"efficiency"],
-                       link_p[heat]),
-                      (-n.links.loc[electric,"efficiency"].values,
-                       link_p[electric].values))
-
-        define_constraints(n, lhs, "<=", 0, 'chplink', 'backpressure')
-
-
-    if not electric_ext.empty:
-
-        link_p_nom = get_var(n, "Link", "p_nom")
-        link_p = get_var(n, "Link", "p")
-
-        #top_iso_fuel_line for extendable
-        lhs = linexpr((1,link_p[heat_ext]),
-                      (1,link_p[electric_ext].values),
-                      (-1,link_p_nom[electric_ext].values))
-
-        define_constraints(n, lhs, "<=", 0, 'chplink', 'top_iso_fuel_line_ext')
-
-
+    # top_iso_fuel_line for fixed
     if not electric_fix.empty:
+        lhs = p.loc[:, electric_fix] + p.loc[:, heat_fix]
+        rhs = n.links.p_nom[electric_fix]
+        n.model.add_constraints(lhs <= rhs, name="chplink-top_iso_fuel_line_fix")
 
-        link_p = get_var(n, "Link", "p")
+    # back-pressure
+    if not electric.empty:
+        lhs = (
+            p.loc[:, heat] * (n.links.efficiency[heat] * n.links.c_b[electric].values)
+            - p.loc[:, electric] * n.links.efficiency[electric]
+        )
+        n.model.add_constraints(lhs <= rhs, name="chplink-backpressure")
 
-        #top_iso_fuel_line for fixed
-        lhs = linexpr((1,link_p[heat_fix]),
-                      (1,link_p[electric_fix].values))
 
-        define_constraints(n, lhs, "<=", n.links.loc[electric_fix,"p_nom"].values, 'chplink', 'top_iso_fuel_line_fix')
-
-def add_land_use_constraint(n):
-
+def add_land_use_constraint(n):   
     #warning: this will miss existing offwind which is not classed AC-DC and has carrier 'offwind'
     for carrier in ['solar', 'onwind', 'offwind-ac', 'offwind-dc']:
         existing_capacities = n.generators.loc[n.generators.carrier==carrier,"p_nom"].groupby(n.generators.bus.map(n.buses.location)).sum()
@@ -203,6 +193,7 @@ def add_land_use_constraint(n):
         n.generators.loc[existing_capacities.index,"p_nom_max"] -= existing_capacities
 
     n.generators.p_nom_max[n.generators.p_nom_max<0]=0.
+
 
 def extra_functionality(n, snapshots):
     #add_opts_constraints(n, opts)
@@ -229,7 +220,7 @@ def solve_network(n, config=None, solver_log=None, opts=None):
         solver_log = snakemake.log.solver
     solver_name = solver_options.pop('name')
 
-    def run_lopf(n, allow_warning_status=False, fix_zero_lines=False, fix_ext_lines=False):
+    def run_lopf(n, allow_warning_status=False, fix_zero_lines=False, fix_ext_lines=False, **kwargs):
         free_output_series_dataframes(n)
 
         if fix_zero_lines:
@@ -267,22 +258,19 @@ def solve_network(n, config=None, solver_log=None, opts=None):
         #print("Model is saved to MPS")
         #sys.exit()
 
+        status, termination_condition = n.optimize(
+            solver_name=solver_name,
+            extra_functionality=extra_functionality,
+            **solver_options,
+            **kwargs,
+        )
 
-        status, termination_condition = n.lopf(pyomo=False,
-                                               solver_name=solver_name,
-                                               solver_logfile=solver_log,
-                                               solver_options=solver_options,
-                                               solver_dir=tmpdir,
-                                               extra_functionality=extra_functionality,
-                                               formulation=solve_opts['formulation'])
-                                               #extra_postprocessing=extra_postprocessing
-                                               #keep_files=True
-                                               #free_memory={'pypsa'}
-
-        assert status == "ok" or allow_warning_status and status == 'warning', \
-            ("network_lopf did abort with status={} "
-             "and termination_condition={}"
-             .format(status, termination_condition))
+        if status != "ok" or allow_warning_status and status == 'warning':
+            logger.warning(
+                f"Solving status '{status}' with termination condition '{termination_condition}'"
+            )
+        if "infeasible" in termination_condition:
+            raise RuntimeError("Solving status 'infeasible'")
 
         if not fix_ext_lines and "line_volume_constraint" in n.global_constraints.index:
             n.line_volume_limit_dual = n.global_constraints.at["line_volume_constraint","mu"]

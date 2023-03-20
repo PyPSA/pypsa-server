@@ -8,6 +8,7 @@ channels:
   - bioconda
 dependencies:
   - pip
+  - python<=3.11  # highs not available at 3.11 yet
   - pypsa>=0.18
   - snakemake-minimal
   - yaml
@@ -27,3 +28,4 @@ dependencies:
   - geopandas
   - pip:
       - vresutils==0.3.1
+      - highspy
