@@ -320,7 +320,7 @@ def average_every_nhours(n, offset):
 
     #fix copying of network attributes
     #copied from pypsa/io.py, should be in pypsa/components.py#Network.copy()
-    allowed_types = (float,int,bool) + string_types + tuple(np.typeDict.values())
+    allowed_types = (float,int,bool) + string_types + tuple(np.sctypeDict.values())
     attrs = dict((attr, getattr(n, attr))
                  for attr in dir(n)
                  if (not attr.startswith("__") and
